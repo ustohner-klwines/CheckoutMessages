@@ -100,12 +100,6 @@
     <button data-ctl="progress" data-val="after">After selection</button>
   </span>
 
-  <span class="mock-bar__group">
-    <span class="mock-bar__label">Annotations</span>
-    <button data-ctl="flags" data-val="on">On</button>
-    <button data-ctl="flags" data-val="off">Off</button>
-  </span>
-
   <span class="mock-bar__spacer"></span>
   <a class="mock-bar__page" href="cart-summary.html">Cart</a>
   <a class="mock-bar__page" href="shipping-methods.html" aria-current="page">Shipping</a>
@@ -958,11 +952,9 @@
     }
   });
 
-  KLMock.init({ fulfilment: "shipping", progress: "after", flags: "on" });
+  KLMock.init({ fulfilment: "shipping", progress: "after" });
 
   window.onMockRender = function (state) {
-    document.body.classList.toggle("no-flags", state.flags === "off");
-
     /* Example 3 asks nothing, so there is no decision to hold: an empty `chosen`
        means every shipment's "is everything before me answered?" test passes and
        all groups render open. Do NOT use [null] here — that would leave pre-arrival

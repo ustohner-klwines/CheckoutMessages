@@ -70,7 +70,18 @@ body {
 .flag--proposed { background: #FBE6CC; color: #8A4B00; }
 
 /* Toolbar "Annotations: off" — view the design with no review chrome at all. */
-body.no-flags .flag { display: none; }
+/* ── ANNOTATIONS ARE OFF ───────────────────────────────────────────────────
+   Hidden unconditionally, and the toolbar's Annotations control is gone: these
+   pages are shared with stakeholders, and a review artefact that also offers
+   review controls invites questions about the controls instead of the design.
+
+   The .flag markup is KEPT in the HTML on purpose — it is the inline record of
+   what changed against the live page, greppable in source and cross-referenced
+   from NOTES.md. Deleting ~40 spans would lose that.
+
+   To show them again for an engineering read: comment this rule out. There is
+   nothing else to restore — no toolbar state, no body class.                */
+.flag { display: none !important; }
 
 /* Shown when a toolbar combination has no groups to render (e.g. Example 3 is
    Pickup + Pre-arrival, so "All RareStorage" leaves nothing). Mockup chrome —
