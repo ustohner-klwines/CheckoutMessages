@@ -92,14 +92,6 @@
     <button data-ctl="fulfilment" data-val="rsonly">Example 4: RS only address</button>
   </span>
 
-  <!-- Hidden for Example 3: pickup has no selectable shipment, so there is no
-       before/after to switch between. -->
-  <span class="mock-bar__group" data-when="fulfilment:shipping|delivery">
-    <span class="mock-bar__label">Shipment 1</span>
-    <button data-ctl="progress" data-val="before">Before selection</button>
-    <button data-ctl="progress" data-val="after">After selection</button>
-  </span>
-
   <span class="mock-bar__spacer"></span>
   <a class="mock-bar__page" href="cart-summary.html">Cart</a>
   <a class="mock-bar__page" href="shipping-methods.html" aria-current="page">Shipping</a>
@@ -952,24 +944,24 @@
     }
   });
 
-  KLMock.init({ fulfilment: "shipping", progress: "after" });
+  KLMock.init({ fulfilment: "shipping" });
 
   window.onMockRender = function (state) {
-    /* Example 3 asks nothing, so there is no decision to hold: an empty `chosen`
-       means every shipment's "is everything before me answered?" test passes and
-       all groups render open. Do NOT use [null] here — that would leave pre-arrival
-       locked forever behind a choice the page never offers. */
+    /* Examples 3 and 4 ask nothing, so there is no decision to hold: an empty
+       `chosen` means every shipment's "is everything before me answered?" test
+       passes and all groups render open. Do NOT use [null] here — that would leave
+       pre-arrival locked forever behind a choice the page never offers. */
     if (state.fulfilment === "pickup" || state.fulfilment === "rsonly") {
       chosen = [];
       paint();
       return;
     }
 
-    /* Shipment 1's default method differs by Example — a carrier in Example 1,
-       local delivery in Example 2 — so the presets have to follow it. */
-    var first = state.fulfilment === "delivery" ? "Local Delivery ($9.00)" : "FedEx 3-Day ($36.00)";
-
-    chosen = state.progress === "before" ? [null] : [first];
+    /* Examples 1 and 2 open UN-SELECTED — the state a shopper actually arrives in.
+       The before/after toolbar control is gone; the after state is reached the way
+       the shopper reaches it, by clicking a method, and undone with the pencil.
+       Switching example resets to un-selected, which is the honest starting point. */
+    chosen = [null];
     paint();
   };
   KLMock.render();
