@@ -29,10 +29,14 @@
 # ── WHAT IS NOT PUBLISHED ────────────────────────────────────────────────
 # NOTES.md. Azure Static Web Apps are PUBLIC — repo visibility is irrelevant,
 # anyone with the URL reads whatever is published. NOTES.md is the internal
-# decision record: it names unenforced commercial policy (the 60-day storage
-# limit), unresolved pricing questions, and copy K&L has not agreed to. None of
-# that belongs on the open internet. Same call as the VaultInventory prototypes.
-# To publish it anyway, uncomment the marked line below.
+# decision record and stays in the design-system repo only. Same call as the
+# VaultInventory prototypes. To publish it anyway, uncomment the marked line
+# below — read it first and decide whether every line of it is fit to be public.
+#
+# This file, README.md and any other .md are blocked from the site by
+# staticwebapp.config.json. That matters: THIS SCRIPT IS ITSELF PUBLISHED unless
+# blocked, so its comments are public too. Do not describe the contents of
+# NOTES.md here — say that it is internal and leave it at that.
 
 set -euo pipefail
 

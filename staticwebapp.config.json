@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/staticwebapp.config.json",
+
+  "//": [
+    "Azure Static Web Apps serve EVERY file under the app location, and the site",
+    "is public whatever the repo's visibility. Without these rules the publish",
+    "script and any .md in the repo are readable by anyone with the URL.",
+    "",
+    "Only the prototypes, their assets and the landing page should be reachable."
+  ],
+
+  "routes": [
+    { "route": "/sync.sh",                  "statusCode": 404 },
+    { "route": "/README.md",                "statusCode": 404 },
+    { "route": "/DEPLOYING.md",             "statusCode": 404 },
+    { "route": "/*.md",                     "statusCode": 404 },
+    { "route": "/*.sh",                     "statusCode": 404 },
+    { "route": "/Mockups/CheckoutMessage/*.md", "statusCode": 404 }
+  ],
+
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/Mockups/*", "/KL-Design_System/*", "/*.css", "/*.js"]
+  }
+}
