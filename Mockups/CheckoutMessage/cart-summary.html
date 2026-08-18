@@ -106,12 +106,6 @@
   </span>
 
   <span class="mock-bar__group">
-    <span class="mock-bar__label">ZIP</span>
-    <button data-ctl="zip" data-val="yes">Entered</button>
-    <button data-ctl="zip" data-val="no">Not entered</button>
-  </span>
-
-  <span class="mock-bar__group">
     <span class="mock-bar__label">Group 3</span>
     <button data-ctl="group3" data-val="prearrival">Pre-arrival</button>
     <button data-ctl="group3" data-val="specialorder">Special order</button>
@@ -1070,6 +1064,11 @@
 
 <script src="_shared/checkout-mock.js"></script>
 <script>
+  /* zip stays in the state with no toolbar control, so the "no ZIP entered" markup
+     is dormant rather than deleted — that case needs more design work and was cut
+     from the first stakeholder review, not abandoned. It is still reachable with
+     ?zip=no on the URL for an internal look. Restore the control by putting its
+     two buttons back in the toolbar; nothing else has to change. */
   KLMock.init({
     fulfilment:  "shipping",
     composition: "full",
