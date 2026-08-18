@@ -624,6 +624,34 @@
 
                The full explainer panel is still on Shipment 1, where choosing
                RareStorage IS a decision and the detail earns its place. -->
+
+          <!-- >>> DELIVERABLE — RARESTORAGE EXPLAINER, ALWAYS OPEN <<<
+               Copy is legal-reviewed and reproduced verbatim from the live page; the
+               only change is the surface. The live version uses a cream/tan fill that
+               is not in colors.md — this uses background.subtle (#FAF8F8) with the
+               standard card border, the only surface-variation token there is.
+
+               EXAMPLE 3 ONLY, and always open rather than opt-in: pickup offers no
+               RareStorage choice on shipment 1, so there is no selection to hang it
+               off and nowhere else on the page it could appear. In Examples 1 and 2
+               this shipment has no panel — theirs sits on shipment 1, where choosing
+               RareStorage IS a decision, and one explainer per page is the rule. -->
+          <div class="callout rs-panel" data-rs-panel="fixed" data-when="fulfilment:pickup" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding">
+            <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+              Transfer to RareStorage
+            </div>
+            <p class="callout__text" data-design-token="typography.variants.body2 colors.text.primary">
+              Your order will be transferred to RareStorage, our independent storage partner,
+              after K&amp;L processes the sale. This option is intended for customers who wish
+              to store and manage their collection.
+            </p>
+            <ul class="callout__list" data-design-token="typography.variants.body2 colors.text.primary">
+              <li>Purchases are stored in secure, temperature-controlled facilities operated by RareStorage</li>
+              <li>After checkout, you will receive an email with instructions to access and manage your collection in your RareStorage Vault</li>
+              <li>From your Vault, you may request storage or initiate shipment of your property directly through RareStorage under their terms and policies</li>
+              <li>Storage: 60 days complimentary. After 60 days, $0.40 per bottle per month ($9.50 minimum). See <span class="t-link">RareStorage.com</span> for full details</li>
+            </ul>
+          </div>
         </section>
 
 
@@ -719,6 +747,30 @@
             </div>
           </details>
 
+
+          <!-- >>> DELIVERABLE — RARESTORAGE EXPLAINER, ALWAYS OPEN <<<
+               Same verbatim legal-reviewed copy, same background.subtle surface.
+
+               Always open here for the strongest version of the reason: in Example 4
+               the ENTIRE order goes into storage. There is no choice to gate it on and
+               no other shipment arriving normally, so this panel is the only place the
+               shopper learns the terms. -->
+          <div class="callout rs-panel" data-rs-panel="fixed" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding">
+            <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+              Transfer to RareStorage
+            </div>
+            <p class="callout__text" data-design-token="typography.variants.body2 colors.text.primary">
+              Your order will be transferred to RareStorage, our independent storage partner,
+              after K&amp;L processes the sale. This option is intended for customers who wish
+              to store and manage their collection.
+            </p>
+            <ul class="callout__list" data-design-token="typography.variants.body2 colors.text.primary">
+              <li>Purchases are stored in secure, temperature-controlled facilities operated by RareStorage</li>
+              <li>After checkout, you will receive an email with instructions to access and manage your collection in your RareStorage Vault</li>
+              <li>From your Vault, you may request storage or initiate shipment of your property directly through RareStorage under their terms and policies</li>
+              <li>Storage: 60 days complimentary. After 60 days, $0.40 per bottle per month ($9.50 minimum). See <span class="t-link">RareStorage.com</span> for full details</li>
+            </ul>
+          </div>
         </section>
 
 
