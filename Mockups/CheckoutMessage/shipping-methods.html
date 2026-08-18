@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K&L — Shipping Methods (Shipment Messaging)</title>
+
+<!--
+  ============================================================================
+  SHIPPING METHODS — shipment messaging redesign
+  Target: KLWines.ReactWeb
+          src/components/Checkout/Shipping/ShippingMethodSelector.tsx
+          src/components/Checkout/Shipping/ShipwaySelector.tsx
+          src/components/Checkout/Shipping/RareStorageInformation.tsx
+          src/components/Checkout/Shipping/ShippingInformation.tsx
+          src/components/Checkout/Shipping/DeliverySelector.tsx
+  ============================================================================
+
+  KEPT FROM THE LIVE PAGE
+    1. The Delivery / Pick Up tabs at the top.
+    2. Progressive disclosure — a shipment's methods appear only once the
+       previous shipment has one chosen.
+
+  >>> DELIVERABLE — TWO KINDS OF SHIPMENT GROUP <<<
+    A shipment either asks the shopper something or it does not, and the two
+    should not look alike.
+
+    CHOOSE (shipment 1 — carriers, or local delivery vs storage)
+        Three states: locked → open (methods listed) → done (chosen method
+        + Edit). A radio means a decision, and here there is one.
+
+    FIXED (shipment 2 RareStorage · shipment 3 pre-arrival)
+        No states, no radio, no card. The one method is stated as a fact in
+        the heading and the sentences below it. A single radio button is a
+        false choice: it looks like a decision, cannot be answered any other
+        way, and blocks the next shipment until the shopper clicks the only
+        thing available.
+
+  TAKEN OVER FROM THE NEW CART DESIGN
+    Same shipment identity as the cart, in the same order, so the shopper sees
+    the same three things twice:
+       ▌ Shipment 1 of 3 — Ships from Northern California
+       ▌ Shipment 2 of 3 — Transfer to RareStorage
+       ▌ Shipment 3 of 3 — Pre-arrival — expected by October 31, 2026
+    Charcoal pipe on the eyebrow, burgundy on pre-arrival with its AccessTime
+    icon. Divider + space between groups, no cards, no rules between items.
+
+  >>> DELIVERABLE — PRE-ARRIVAL NO LONGER ASKS FOR A CARRIER <<<
+    Today the shopper picks a carrier for the pre-arrival shipment at $0.00,
+    then has to pick again months later when the bottles actually land. The
+    first choice is meaningless: it cannot be priced and it is not honoured.
+    So the carrier list is gone, replaced by what is actually true:
+        "We'll contact you to arrange shipping or pickup for the item(s) below"
+        "No shipping charges until the items are ready to ship"
+    The first sentence opens the bottles it refers to — see SUB-GROUPS below.
+
+  >>> DELIVERABLE — "ITEM(S) BELOW…" OPENS THE PRODUCTS (SUB-GROUPS) <<<
+    Every sentence that points at a list of items is the control that reveals it:
+    underlined, text.primary, caret at the end, collapsed by default. Where a
+    shipment draws stock from two stores with different ready dates, it splits
+    into sub-groups and each sentence opens only its own bottles.
+    The revealed rows are a PREVIEW — thumbnail, name, quantity, line total. No
+    steppers, no Remove, no Favorites: this page is about how a shipment travels,
+    not what is in the basket.
+
+  COPY RULES CARRIED FROM THE CART (see NOTES.md)
+    - "Delivery" means Local Delivery only. Carrier time is "transit".
+    - Never say we "can't ship" to a state; say what happens instead.
+
+  WHAT IT DOES NOT COVER
+    Example 3 (Pickup) is not designed yet — the toolbar shows a placeholder
+    for it. Mobile is round 2.
+
+  STATES ARE WIRED — use the toolbar, or click a shipping method to advance.
+-->
+
+<link rel="stylesheet" href="../../KL-Design_System/tokens.css">
+<link rel="stylesheet" href="_shared/checkout-mock.css">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ══════ MOCKUP TOOLBAR — not part of the design ══════ -->
+<div class="mock-bar">
+  <span class="mock-bar__brand">Mockup controls</span>
+
+  <span class="mock-bar__group">
+    <span class="mock-bar__label">Example</span>
+    <button data-ctl="fulfilment" data-val="shipping">Example 1: Shipping/RareStorage/Prearrival</button>
+    <button data-ctl="fulfilment" data-val="delivery">Example 2: Local Delivery</button>
+    <button data-ctl="fulfilment" data-val="pickup">Example 3: Pickup</button>
+    <button data-ctl="fulfilment" data-val="rsonly">Example 4: RS only address</button>
+  </span>
+
+  <!-- Hidden for Example 3: pickup has no selectable shipment, so there is no
+       before/after to switch between. -->
+  <span class="mock-bar__group" data-when="fulfilment:shipping|delivery">
+    <span class="mock-bar__label">Shipment 1</span>
+    <button data-ctl="progress" data-val="before">Before selection</button>
+    <button data-ctl="progress" data-val="after">After selection</button>
+  </span>
+
+  <span class="mock-bar__group">
+    <span class="mock-bar__label">Annotations</span>
+    <button data-ctl="flags" data-val="on">On</button>
+    <button data-ctl="flags" data-val="off">Off</button>
+  </span>
+
+  <span class="mock-bar__spacer"></span>
+  <a class="mock-bar__page" href="cart-summary.html">Cart</a>
+  <a class="mock-bar__page" href="shipping-methods.html" aria-current="page">Shipping</a>
+  <a class="mock-bar__page" href="order-review.html">Review</a>
+  <a class="mock-bar__page" href="receipt.html">Receipt</a>
+</div>
+
+
+<!-- ══════ HEADER PLACEHOLDER — layout.md §"Prototype representation" ══════ -->
+<div class="kl-header" data-design-token="colors.background.header colors.background.nav" aria-hidden="true">
+  <div class="kl-header-mobile">
+    <div class="kl-header-mobile-bar">
+      <div class="kl-header-icon-group">
+        <div class="kl-header-icon-btn"><svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></div>
+        <div class="kl-header-icon-btn"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+      </div>
+      <span class="kl-header-mobile-logo">K&amp;L</span>
+      <div class="kl-header-icon-group kl-header-icon-group--right">
+        <div class="kl-header-icon-btn"><svg viewBox="0 0 24 24"><path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+        <div class="kl-header-icon-btn"><svg viewBox="0 0 24 24"><path d="M15.55 13c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.37-.66-.11-1.48-.87-1.48H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2h7.45zM6.16 6h12.15l-2.76 5H8.53L6.16 6zM7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+      </div>
+    </div>
+    <div class="kl-header-search">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <span class="kl-header-search-text">What can we help you find?</span>
+    </div>
+  </div>
+
+  <div class="kl-header-desktop">
+    <div class="kl-header-topbar">
+      <div class="kl-header-topbar-zone">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        What can we help you find?
+      </div>
+      <span class="kl-header-topbar-logo">K&amp;L Wine Merchants</span>
+      <div class="kl-header-topbar-zone kl-header-topbar-zone--right">
+        Gift Cards · Contact · My Account · Hello, Ute · Cart (<span data-when="fulfilment:shipping|delivery|pickup">11</span><span data-when="fulfilment:rsonly">5</span>)
+      </div>
+    </div>
+    <div class="kl-header-navbar" data-design-token="colors.background.nav typography.fontFamily.lora typography.fontSize.navMain">
+      <span class="kl-header-nav-item">Wines</span>
+      <span class="kl-header-nav-item">Spirits</span>
+      <span class="kl-header-nav-item">Auctions</span>
+      <span class="kl-header-nav-item">Wine Clubs</span>
+      <span class="kl-header-nav-item">Storage</span>
+      <span class="kl-header-nav-item">Delivery</span>
+      <span class="kl-header-nav-item">Events</span>
+    </div>
+  </div>
+</div>
+
+
+<div class="page-container page-body">
+
+  <div class="checkout-layout">
+
+    <!-- ══════════════ PRIMARY COLUMN ══════════════ -->
+    <main class="checkout-main">
+
+      <!-- Delivery / Pick Up tabs — existing component, unchanged -->
+      <div class="tabs">
+        <div class="tab tab--on"  data-when="fulfilment:shipping|delivery|rsonly" data-design-token="colors.cta.primary colors.text.onDark typography.fontSize.subsection typography.fontWeight.bold" data-mui-component="Button variant=contained color=secondary">Delivery</div>
+        <div class="tab tab--off" data-when="fulfilment:pickup" data-design-token="colors.grey.neutral colors.text.primary typography.fontSize.subsection typography.fontWeight.bold" data-mui-component="Button color=neutral">Delivery</div>
+        <div class="tab tab--off" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="colors.grey.neutral colors.text.primary typography.fontSize.subsection typography.fontWeight.bold" data-mui-component="Button color=neutral">Pick Up</div>
+        <div class="tab tab--on"  data-when="fulfilment:pickup" data-design-token="colors.cta.primary colors.text.onDark typography.fontSize.subsection typography.fontWeight.bold" data-mui-component="Button variant=contained color=secondary">Pick Up</div>
+      </div>
+
+      <!-- Delivery address — existing component, unchanged -->
+      <div class="section-heading" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Delivery Address</div>
+      <!-- Pickup has no delivery address; it has a collection store. -->
+      <div class="section-heading" data-when="fulfilment:pickup" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Pickup Location</div>
+      <div class="addr">
+        <!-- Example 2 must be within local-delivery range of the Redwood City store. -->
+        <div class="addr__lines" data-when="fulfilment:shipping" data-design-token="typography.variants.body1 colors.text.primary">
+          7728 Regents Rd<br>San Diego CA 92122, USA
+        </div>
+        <div class="addr__lines" data-when="fulfilment:delivery" data-design-token="typography.variants.body1 colors.text.primary">
+          742 Laurel St<br>Redwood City CA 94063, USA
+        </div>
+        <!-- Example 4: an RS-only state. ZIP 80123 is the one in the uploaded
+             screenshot (Littleton CO); the street line is a PLACEHOLDER.
+             The address still matters even though nothing is delivered to it — it is
+             what determines that the whole order has to go to RareStorage. -->
+        <div class="addr__lines" data-when="fulfilment:rsonly" data-design-token="typography.variants.body1 colors.text.primary">
+          4820 S Wadsworth Blvd<br>Littleton CO 80123, USA
+        </div>
+        <!-- Store name and ZIP are the ones already used across these mockups. The
+             street line is a PLACEHOLDER — the real store address was not to hand. -->
+        <div class="addr__lines" data-when="fulfilment:pickup" data-design-token="typography.variants.body1 colors.text.primary">
+          RareStorage Redwood City<br>Redwood City CA 94063, USA
+        </div>
+        <svg class="addr__edit" viewBox="0 0 24 24" aria-hidden="true" data-design-token="colors.grey.muted"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      </div>
+
+      <div class="section-heading" data-when="fulfilment:shipping|delivery" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Shipping Method</div>
+      <!-- Nothing ships in Example 3's first shipment and nothing is selected in
+           either, so "Shipping Method" would name neither the content nor an action. -->
+      <div class="section-heading" data-when="fulfilment:pickup|rsonly" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Your Shipments</div>
+
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           ORDER-LEVEL SUMMARY — repeated from the cart
+           >>> DELIVERABLE <<<
+
+           The cart shows this line, but only once a ZIP code is known: without
+           one there are no shipments to count, so a shopper who never entered a
+           ZIP on the cart reaches this page having never been told the order is
+           splitting. This is the first point the split is certain, so it is also
+           the first point it can be stated unconditionally.
+
+           Same treatment as the cart — charcoal truck, hairline rule beneath, no
+           fill and no box — so it reads as the same statement rather than a new
+           one. The count is generated from the shipments actually visible.
+
+           No "Quantity: N items" here: the cart puts it on this line because the
+           cart is where quantities are edited. This page lists no quantities
+           outside the item previews.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="order-summary-msg" data-design-token="colors.grey.border spacing.md spacing.xl">
+        <svg class="order-summary-msg__icon" viewBox="0 0 24 24" aria-hidden="true"
+             data-design-token="colors.brand.charcoal"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+        <div class="order-summary-msg__body">
+          <div class="order-summary-msg__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+            Your order arrives in <span data-count>3</span> <span data-count-word>shipments</span>
+            <span class="flag flag--new">New</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ship-groups">
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SHIPMENT 1 (EXAMPLE 2) — LOCAL DELIVERY
+             >>> DELIVERABLE <<<
+
+             The shopper is in range of Redwood City, so CA stock is consolidated
+             there and delivered locally — one shipment, matching the cart.
+
+             RareStorage is still offered as the alternative: local delivery is
+             the default given the address, but the shopper can divert the whole
+             shipment into storage instead. That choice is what advances the
+             progressive disclosure.
+
+             This is a CHOOSE shipment, so it gets the full before/after pair:
+               BEFORE  two option cards, no fee on the heading — the fee is a
+                       property of one of the two options, not of the shipment,
+                       so stating it up top pre-empts a choice not yet made
+               AFTER   cards collapse to the fee that resulted, plus the pencil
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="ship-group" data-group="ld" data-ship="0" data-when="fulfilment:delivery">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>1</span> of <span data-seq-total>3</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Local Delivery
+                <span class="flag flag--new">New</span>
+              </h2>
+            </div>
+          </div>
+
+          <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
+            Items below will be transferred to RareStorage Redwood City for Local Delivery
+            to your address.
+          </p>
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            You can select delivery options on the receipt page
+          </p>
+
+          <!-- >>> DELIVERABLE — SUB-GROUPS <<<
+               The shipment consolidates stock from two stores, and they are ready on
+               different days. The cart already splits them; this page did not, so the
+               two timings had to share one sentence and neither was attached to the
+               bottles it applied to.
+
+               The two shipment sentences above are unchanged — they describe the whole
+               shipment. These describe its parts, and each one opens its own parts. -->
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below are transferring from RareStorage San Francisco. Available for local delivery in <strong>2 days</strong></span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$43.98</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$17.99</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below are in RareStorage Redwood City. Available for local delivery in <strong>1&ndash;2 days</strong></span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#8D9440"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2023 Esk Valley Sauvignon Blanc Marlborough</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$29.98</div>
+              </div>
+            </div>
+          </details>
+
+          <!-- AFTER SELECTION — the fee that resulted, plus the pencil to reopen.
+               No method name: "Local Delivery ($9.00)" only repeated the heading.
+               The label is written by paint(), because the shopper may have chosen
+               RareStorage instead, and "Delivery fee: $9" would then be a lie. -->
+          <div class="ship-group__chosen">
+            <span class="ship-group__fee" data-chosen-fee data-design-token="typography.variants.body2 colors.text.primary">
+              Delivery fee: <strong>$9</strong>
+            </span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" data-edit="0" data-design-token="colors.grey.muted"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </div>
+
+          <!-- BEFORE SELECTION — the two option cards -->
+          <div class="ship-group__options">
+            <div class="option" data-pick="0" data-label="Local Delivery ($9.00)">
+              <span class="option__radio"></span>
+              <span class="option__label">Local Delivery to your address</span>
+              <span class="option__price">$9.00</span>
+            </div>
+
+            <div class="or-rule">or</div>
+
+            <div class="option option--star" data-pick="0" data-label="Stored with RareStorage">
+              <span class="option__radio"></span>
+              <span class="option__label">&#9733; Store your order with RareStorage</span>
+              <span class="option__price">$0.00</span>
+            </div>
+          </div>
+
+          <!-- Opt-in RareStorage explainer, same as Example 1's shipment 1. -->
+          <div class="callout rs-panel is-hidden" data-rs-panel="0" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding">
+            <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+              Transfer to RareStorage
+            </div>
+            <p class="callout__text" data-design-token="typography.variants.body2 colors.text.primary">
+              Your order will be transferred to RareStorage, our independent storage partner,
+              after K&amp;L processes the sale. This option is intended for customers who wish
+              to store and manage their collection.
+            </p>
+            <ul class="callout__list" data-design-token="typography.variants.body2 colors.text.primary">
+              <li>Purchases are stored in secure, temperature-controlled facilities operated by RareStorage</li>
+              <li>After checkout, you will receive an email with instructions to access and manage your collection in your RareStorage Vault</li>
+              <li>From your Vault, you may request storage or initiate shipment of your property directly through RareStorage under their terms and policies</li>
+              <li>Storage: 60 days complimentary. After 60 days, $0.40 per bottle per month ($9.50 minimum). See <span class="t-link">RareStorage.com</span> for full details</li>
+            </ul>
+          </div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SHIPMENT 1 (EXAMPLE 3) — PICKUP
+             >>> DELIVERABLE <<<  A SHIPMENT WITH NOTHING TO CHOOSE
+
+             Example 3 is the case where the shopper is asked nothing at all.
+             Pickup has no RareStorage alternative — the order is already going to
+             a RareStorage store, so "store it instead" is not a different outcome
+             — and pre-arrival is deferred as always. Both shipments are FIXED, so
+             the page is entirely informational and Continue is live on arrival.
+
+             That makes Example 3 the proof that the CHOOSE/FIXED split in §6 of
+             NOTES.md holds: strip out every decision and the page still reads,
+             because the shipment identity was never carried by the radios.
+
+             Two stores are involved, exactly as in the cart: stock consolidates at
+             Redwood City, some of it transferring in from San Francisco.
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="ship-group" data-group="pu" data-ship="0" data-when="fulfilment:pickup">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>1</span> of <span data-seq-total>2</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Pickup from RareStorage Redwood City
+                <span class="flag flag--new">New</span>
+              </h2>
+            </div>
+          </div>
+
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            Items below will be transferred to RareStorage Redwood City for Pickup
+          </p>
+
+          <!-- Replaces the single merged sentence this shipment carried while the page
+               had no item lists ("Items already in Redwood City are available in 1–2
+               days. Items transferring from RareStorage San Francisco are available in
+               2 days."). With sub-groups the timings go back where they belong, on the
+               bottles they apply to — same structure as Example 2. -->
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below are transferring from RareStorage San Francisco. Available for pickup in <strong>2 days</strong></span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$43.98</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$17.99</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below are in RareStorage Redwood City. Available for pickup in <strong>1&ndash;2 days</strong></span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#8D9440"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2023 Esk Valley Sauvignon Blanc Marlborough</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$29.98</div>
+              </div>
+            </div>
+          </details>
+
+          <!-- NO OPTIONS BLOCK, NO CHOSEN ROW, NO PENCIL.
+               Not an omission — there is no second way to fulfil this shipment. -->
+        </section>
+
+
+        <!-- ═══════════ SHIPMENT 1 (EXAMPLE 1) — California warehouse ═══════════ -->
+        <section class="ship-group" data-group="ca" data-ship="0" data-when="fulfilment:shipping">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>1</span> of <span data-seq-total>3</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Ships from Northern California
+              </h2>
+            </div>
+          </div>
+
+          <!-- One origin, so no sub-groups: the shipment's own sentence opens the list. -->
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below leave our warehouse in <strong>1&ndash;2 days</strong>. Transit time depends on your address</span>
+              <span class="flag flag--changed">Reworded</span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$43.98</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$17.99</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#8D9440"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2023 Esk Valley Sauvignon Blanc Marlborough</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$29.98</div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Chosen state -->
+          <div class="ship-group__chosen">
+            <span data-design-token="typography.variants.body2 colors.text.primary"><span data-chosen-label>FedEx 3-Day ($36.00)</span></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" data-edit="0" data-design-token="colors.grey.muted"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </div>
+
+          <!-- Options -->
+          <div class="ship-group__options">
+            <div class="option" data-pick="0" data-label="FedEx 2-Day ($40.00)"><span class="option__radio"></span><span class="option__label">FedEx 2-Day</span><span class="option__price">$40.00</span></div>
+            <div class="option" data-pick="0" data-label="FedEx 3-Day ($36.00)"><span class="option__radio"></span><span class="option__label">FedEx 3-Day</span><span class="option__price">$36.00</span></div>
+            <div class="option" data-pick="0" data-label="FedEx Ground ($27.00)"><span class="option__radio"></span><span class="option__label">FedEx Ground</span><span class="option__price">$27.00</span></div>
+            <div class="option" data-pick="0" data-label="FedEx Next-Day Priority ($69.00)"><span class="option__radio"></span><span class="option__label">FedEx Next-Day Priority</span><span class="option__price">$69.00</span></div>
+            <div class="option" data-pick="0" data-label="FedEx Next-Day Standard ($66.00)"><span class="option__radio"></span><span class="option__label">FedEx Next-Day Standard</span><span class="option__price">$66.00</span></div>
+            <div class="option" data-pick="0" data-label="GLS ($31.00)"><span class="option__radio"></span><span class="option__label">GLS</span><span class="option__price">$31.00</span></div>
+            <div class="option" data-pick="0" data-label="UPS Ground ($26.00)"><span class="option__radio"></span><span class="option__label">UPS Ground</span><span class="option__price">$26.00</span></div>
+
+            <div class="or-rule">or</div>
+
+            <div class="option option--star" data-pick="0" data-label="Stored with RareStorage">
+              <span class="option__radio"></span>
+              <span class="option__label">&#9733; Store your order with RareStorage</span>
+            </div>
+          </div>
+
+          <!-- Opt-in case: shown only when the shopper actually chooses RareStorage
+               for this shipment. Keeps the live intro sentence, which is accurate
+               here because it IS an option they selected. -->
+          <div class="callout rs-panel is-hidden" data-rs-panel="0" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding">
+            <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+              Transfer to RareStorage
+            </div>
+            <p class="callout__text" data-design-token="typography.variants.body2 colors.text.primary">
+              Your order will be transferred to RareStorage, our independent storage partner,
+              after K&amp;L processes the sale. This option is intended for customers who wish
+              to store and manage their collection.
+            </p>
+            <ul class="callout__list" data-design-token="typography.variants.body2 colors.text.primary">
+              <li>Purchases are stored in secure, temperature-controlled facilities operated by RareStorage</li>
+              <li>After checkout, you will receive an email with instructions to access and manage your collection in your RareStorage Vault</li>
+              <li>From your Vault, you may request storage or initiate shipment of your property directly through RareStorage under their terms and policies</li>
+              <li>Storage: 60 days complimentary. After 60 days, $0.40 per bottle per month ($9.50 minimum). See <span class="t-link">RareStorage.com</span> for full details</li>
+            </ul>
+          </div>
+        </section>
+
+
+        <!-- ═══════════ SHIPMENT 2 — New York → RareStorage ═══════════ -->
+        <!-- Examples 1, 2 and 3. Example 4 has its own version of this shipment, split
+             into two origin sub-groups — see NOTES.md §10.
+
+             Example 3 needs it because New York stock cannot be picked up either: it has
+             to go to RareStorage first, and the shopper collects it from there. Only the
+             storage sentence changes — the destination is a store they can walk into
+             rather than a shipping charge they will be billed for later. See §12. -->
+        <section class="ship-group" data-group="rs" data-ship="1" data-when="fulfilment:shipping|delivery|pickup">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>2</span> of <span data-seq-total>3</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Transfer to RareStorage
+                <span class="flag flag--new">New</span>
+              </h2>
+            </div>
+          </div>
+
+          <!-- ORDER RULE: a sentence that says "item(s) below" must be the LAST
+               statement in the group, immediately above the items it points at.
+               Everything that is true of the shipment as a whole goes above it — so
+               the storage terms lead, and the items-pointing sentence closes.
+
+               Two variants of the same fact. A shipping order gets billed by RareStorage
+               for the onward leg; a pickup order does not — the shopper collects from the
+               store, so naming a shipping charge would invent one. Trailing period added
+               to the pickup variant for consistency with its sibling. -->
+          <p class="ship-group__msg" data-when="fulfilment:shipping|delivery" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage. Shipping will be charged separately by RareStorage.
+            <span class="flag flag--new">New</span>
+          </p>
+          <p class="ship-group__msg" data-when="fulfilment:pickup" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage. Items can be picked up at RareStorage Redwood City
+            once available.
+            <span class="flag flag--new">New</span>
+          </p>
+
+          <!-- Wording is the one specified earlier ("Items below…", not "Item(s) below…"),
+               kept verbatim; only the disclosure is new. -->
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Items below will transfer to RareStorage, leaving the New York warehouse in <strong>1&ndash;2 days</strong>.</span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (1.8 L)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 3</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$19.47</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$17.99</div>
+              </div>
+            </div>
+          </details>
+          <!-- No "Transfer fee: $0.00". It travelled here from the radio row it used to
+               sit on, but nobody expects to be charged for a transfer, so quoting $0.00
+               answers a question the shopper never asked — and naming a fee at all plants
+               the idea that one exists. The line that matters is the one above it: the
+               charge comes later, from RareStorage. -->
+
+          <!-- >>> DELIVERABLE — NOTHING TO CHOOSE, SO NOTHING TO CLICK <<<
+               No radio, no chosen-method summary, no Edit pencil, no explainer
+               card. RareStorage is what happens to New York stock; the heading,
+               the fee beside it and the two sentences above say so completely.
+
+               What was removed and why:
+                 · single radio  — a control with one option is a false choice,
+                                   and it gate-kept shipment 3 behind a click
+                                   whose outcome was already decided
+                 · chosen + Edit — nothing to edit back to
+                 · explainer card — answered a question the shopper cannot act on
+
+               The full explainer panel is still on Shipment 1, where choosing
+               RareStorage IS a decision and the detail earns its place. -->
+        </section>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SHIPMENT 1 (EXAMPLE 4) — RS-ONLY ADDRESS
+             >>> DELIVERABLE <<<  THE WHOLE ORDER GOES TO STORAGE
+
+             The shopper's state is one K&L can only serve through RareStorage, so
+             there is no version of this order that arrives at their door. Every
+             in-stock bottle transfers, whichever warehouse it starts from — which is
+             why the shipment is not split by destination but by ORIGIN: New York and
+             Northern California release on different days.
+
+             Sub-groups are ordered soonest-first (1–2 days before 3–4), not in the
+             order the live cart lists them. The screenshot shows Northern California
+             first; the spec asked for New York first, which also happens to put the
+             earlier date at the top.
+
+             Like Example 3, nothing here is selectable: both shipments are FIXED.
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="ship-group" data-group="rs4" data-ship="0" data-when="fulfilment:rsonly">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>1</span> of <span data-seq-total>2</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Transfer to RareStorage
+                <span class="flag flag--new">New</span>
+              </h2>
+            </div>
+          </div>
+
+
+          <!-- ORDER RULE: everything true of the whole shipment goes above the
+               sentence that points at items. So the storage terms lead, then the
+               transfer sentence, then the two origin sub-groups it introduces. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage. Shipping will be charged separately by RareStorage.
+            <span class="flag flag--new">New</span>
+          </p>
+
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            Items below will transfer to RareStorage
+          </p>
+
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below will transfer to RareStorage, leaving the New York warehouse in <strong>1&ndash;2 days</strong>.</span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$6.49</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$17.99</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below will transfer to RareStorage, leaving the Northern California warehouse in <strong>3&ndash;4 days</strong>.</span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$21.99</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#722F37"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2021 Marqu&eacute;s de Murrieta Reserva Rioja</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$27.99</div>
+              </div>
+            </div>
+          </details>
+
+        </section>
+
+
+        <!-- ═══════════ SHIPMENT 3 — Pre-arrival ═══════════
+             >>> DELIVERABLE <<<  NO CARRIER LIST.
+             The live page shows seven carriers at $0.00 and makes the shopper
+             choose one, then choose again when the wine lands. -->
+        <section class="ship-group ship-group--deferred" data-group="pa" data-ship="2">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>3</span> of <span data-seq-total>3</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                <svg class="ship-group__icon" viewBox="0 0 24 24" aria-hidden="true"
+                     data-design-token="colors.brand.burgundy"
+                     data-mui-component="AccessTimeIcon color=secondary">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                  <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                Pre-arrival &mdash; expected by October 31, 2026
+              </h2>
+            </div>
+          </div>
+
+          <!-- Same FIXED treatment as Shipment 2: plain sentences, no radio. The
+               two single-option shipments look alike, which is the point — "this is
+               what happens" reads differently from "pick one".
+
+               The sentence was reworded from "We'll contact you to arrange shipping"
+               so that it points at a list, which is what earns it the disclosure. This
+               was the one shipment whose contents could not be seen — and the one a
+               shopper most wants to open, since it is what holds the order back.
+
+               "shipping OR PICKUP" because this group appears in all four examples,
+               Example 3 included: a pickup shopper collects their pre-arrival bottles
+               rather than having them shipped, so naming only shipping was wrong there.
+
+               NOTE: the cart still says the shorter version. Diverged deliberately;
+               see NOTES.md §9. -->
+          <!-- ORDER RULE (same as the RareStorage shipments): the sentence that says
+               "item(s) below" is the LAST statement in the group, immediately above the
+               bottles. The charging note is true of the shipment as a whole, so it leads. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            No shipping charges until the items are ready to ship
+          </p>
+
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">We&rsquo;ll contact you to arrange shipping or pickup for the item(s) below</span>
+              <span class="flag flag--new">New</span>
+            </summary>
+            <div class="item-preview">
+              <!-- Example 4 holds ONE pre-arrival bottle, not two — its figures come
+                   from the uploaded screenshot ($124.45 / 5 items). Identical design
+                   treatment to Examples 1 and 2; only quantity and line total differ. -->
+              <div class="item-preview__row" data-unless="fulfilment:rsonly">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2013 Chateau de Pommard Pommard (Pre-Arrival)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$99.98</div>
+              </div>
+              <div class="item-preview__row" data-when="fulfilment:rsonly">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2013 Chateau de Pommard Pommard (Pre-Arrival)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$49.99</div>
+              </div>
+            </div>
+          </details>
+        </section>
+
+      </div><!-- /.ship-groups -->
+
+      <!-- Shipping materials: hidden for pickup. Example 3's first shipment is
+           collected at the counter, and its second is not packed until it lands, so
+           there is no packaging choice to make at checkout. -->
+      <hr class="divider" data-when="fulfilment:shipping|delivery|rsonly">
+
+      <!-- Shipping materials — existing component, unchanged -->
+      <div class="section-heading" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Shipping Materials</div>
+      <p class="t-body2" style="margin-bottom: var(--spacing-md); max-width: 640px;" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.body2 colors.text.primary">
+        Our wine shippers are tested and recommended by FedEx, and are made from
+        environmentally responsible recycled pulp.
+      </p>
+      <label class="checkbox" data-when="fulfilment:shipping|delivery|rsonly">
+        <span class="checkbox__box" data-design-token="colors.grey.border components.card.borderRadius" data-mui-component="Checkbox"></span>
+        <span class="checkbox__label" data-design-token="typography.variants.body2 colors.text.primary">
+          Opt out of our default shipping material and use styrofoam packing instead
+        </span>
+      </label>
+
+    </main>
+
+
+    <!-- ══════════════ SECONDARY RAIL ══════════════ -->
+    <aside class="checkout-rail">
+      <div class="rail-card" data-design-token="colors.grey.border components.card.borderRadius components.card.padding" data-mui-component="Card variant=outlined">
+        <div class="rail-card__title" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">Shipping Information</div>
+        <div class="rail-card__title" data-when="fulfilment:pickup" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">Pickup Information</div>
+
+        <!-- Existing copy, NOT redesigned in this pass — trimmed only so it does
+             not dominate the mockup. Its 60-day storage sentence is the one Q7
+             touched; see NOTES.md. -->
+        <p class="t-caption" style="margin-bottom: var(--spacing-sm);" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.caption colors.text.secondary">
+          <strong>Shipping:</strong> all items are transferred to a CA or NY warehouse before
+          being shipped to your address. Allow 1&ndash;2 business days for processing.
+        </p>
+        <!-- Pickup rail copy: NOT WRITTEN YET. The live page's shipping paragraph is
+             wrong here (nothing is shipped to an address) and inventing collection
+             instructions — hours, ID requirements, how long stock is held — would be
+             putting operational promises in a design file. Placeholder only. -->
+        <p class="t-caption" style="margin-bottom: var(--spacing-sm);" data-when="fulfilment:pickup" data-design-token="typography.variants.caption colors.text.secondary">
+          <strong>Pickup:</strong> items are transferred to your chosen store before
+          collection. Allow 1&ndash;2 business days for processing.
+          <span class="flag flag--proposed">Copy TBC</span>
+        </p>
+        <p class="t-caption" style="margin-bottom: var(--spacing-sm);" data-design-token="typography.variants.caption colors.text.secondary">
+          <strong>RareStorage:</strong> temperature-controlled facilities, first 60 days of
+          storage free. Not suitable for expedited delivery or gift options.
+          <span class="t-link">RareStorage.com</span>
+        </p>
+        <!-- Weather caution is about transit, so it is hidden for pickup. -->
+        <p class="t-caption" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.caption colors.text.secondary">
+          During extreme heat or cold we may contact you about timing. We cannot accept
+          responsibility for weather-related damage in transit.
+        </p>
+      </div>
+
+      <div class="rail-card" data-design-token="colors.grey.border components.card.borderRadius components.card.padding" data-mui-component="Card variant=outlined">
+        <button class="btn btn--primary btn--block" data-design-token="colors.cta.primary colors.text.onDark typography.fontSize.subsection typography.fontWeight.bold" data-mui-component="Button variant=contained color=secondary">
+          Continue
+        </button>
+      </div>
+    </aside>
+
+  </div><!-- /.checkout-layout -->
+</div><!-- /.page-container -->
+
+
+<footer class="kl-footer" aria-hidden="true">
+  <div class="page-container kl-footer__inner">
+    <span class="kl-footer__logo">K&amp;L Wine Merchants</span>
+    <div class="kl-footer__links">
+      <span>About Us</span><span>Careers</span><span>Blog</span><span>Shipping</span><span>Contact</span>
+    </div>
+  </div>
+</footer>
+
+<script src="_shared/checkout-mock.js"></script>
+<script>
+  /* ── Progressive disclosure ──────────────────────────────────────────────
+     Only shipment 1 asks for a method, so `chosen` holds one entry.
+       chosen[0] = the method picked for shipment 1, or null.
+
+     Shipment i is  done   when chosen[i] is set
+                    open   when every earlier shipment is set
+                    locked otherwise
+
+     Shipments 2 and 3 are FIXED — nothing to pick — so they carry no entry in
+     `chosen`. They read as locked until shipment 1 is answered, then simply
+     state what happens. They never enter "done"; there is nothing to confirm. */
+  var chosen = [null];
+
+  function paint() {
+    var groups = Array.prototype.slice.call(document.querySelectorAll("[data-ship]"));
+
+    groups.forEach(function (g) {
+      var i = parseInt(g.dataset.ship, 10);
+      var earlierDone = chosen.slice(0, i).every(function (c) { return c !== null; });
+      var isDone = i < chosen.length && chosen[i] !== null;
+
+      g.classList.remove("is-locked", "is-open", "is-done");
+      g.classList.add(!earlierDone ? "is-locked" : isDone ? "is-done" : "is-open");
+
+      var label = g.querySelector("[data-chosen-label]");
+      if (label && isDone) label.textContent = chosen[i];
+
+      Array.prototype.forEach.call(g.querySelectorAll("[data-pick]"), function (opt) {
+        opt.classList.toggle("option--selected", chosen[i] === opt.dataset.label);
+      });
+    });
+
+    /* Shipment 1's RareStorage panel is opt-in — only when that option is picked.
+       There is one per Example (carriers / local delivery), so toggle them all.
+       Shipment 2 no longer has a panel at all. */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-rs-panel="0"]'), function (p) {
+      p.classList.toggle("is-hidden", chosen[0] !== "Stored with RareStorage");
+    });
+
+    /* Example 2's collapsed state states the fee, not the method name. Which fee
+       depends on which of the two options was taken — diverting the shipment into
+       storage means there is no delivery to charge for. */
+    var fee = document.querySelector("[data-chosen-fee]");
+    if (fee) {
+      /* Storage costs nothing, but "Transfer fee: $0.00" plants the idea of a fee
+         that nobody expected — so that branch states what was chosen instead. It is
+         not redundant with the heading here: the heading says "Local Delivery", and
+         this says the shopper went the other way. */
+      fee.innerHTML = chosen[0] === "Stored with RareStorage"
+        ? "Stored with RareStorage"
+        : "Delivery fee: <strong>$9</strong>";
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    var opt = e.target.closest && e.target.closest("[data-pick]");
+    if (opt) {
+      chosen[parseInt(opt.dataset.pick, 10)] = opt.dataset.label;
+      paint();
+      return;
+    }
+    var edit = e.target.closest && e.target.closest("[data-edit]");
+    if (edit) {
+      var from = parseInt(edit.dataset.edit, 10);
+      for (var i = from; i < chosen.length; i++) chosen[i] = null;  // reopening invalidates later steps
+      paint();
+    }
+  });
+
+  KLMock.init({ fulfilment: "shipping", progress: "after", flags: "on" });
+
+  window.onMockRender = function (state) {
+    document.body.classList.toggle("no-flags", state.flags === "off");
+
+    /* Example 3 asks nothing, so there is no decision to hold: an empty `chosen`
+       means every shipment's "is everything before me answered?" test passes and
+       all groups render open. Do NOT use [null] here — that would leave pre-arrival
+       locked forever behind a choice the page never offers. */
+    if (state.fulfilment === "pickup" || state.fulfilment === "rsonly") {
+      chosen = [];
+      paint();
+      return;
+    }
+
+    /* Shipment 1's default method differs by Example — a carrier in Example 1,
+       local delivery in Example 2 — so the presets have to follow it. */
+    var first = state.fulfilment === "delivery" ? "Local Delivery ($9.00)" : "FedEx 3-Day ($36.00)";
+
+    chosen = state.progress === "before" ? [null] : [first];
+    paint();
+  };
+  KLMock.render();
+</script>
+</body>
+</html>

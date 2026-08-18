@@ -1,0 +1,169 @@
+/**
+ * K&L Wine Merchants — Design Tokens (CSS)
+ *
+ * Design-token CSS for the HTML prototypes — mirrors the KLWines.ReactWeb
+ * MUI theme (theme.ts), which is the runtime source of truth.
+ *
+ * Naming convention mirrors the design-system token paths:
+ *   colors.brand.burgundy  →  --color-brand-burgundy
+ *   typography.variants.h1  →  --font-size-h1 / --line-height-h1
+ *   spacing.lg  →  --spacing-lg
+ */
+
+:root {
+
+  /* ─── COLORS — Brand primitives ───────────── */
+  --color-brand-burgundy:       #6E0C0E;
+  --color-brand-charcoal:       #27292B;
+  --color-brand-off-white:      #FAF8F8;
+  --color-brand-white:          #FFFFFF;
+
+  /* ─── COLORS — Text ─────────────────────────── */
+  --color-text-primary:         #27292B;
+  --color-text-secondary:       rgba(39, 41, 43, 0.6);
+  --color-text-disabled:        rgba(39, 41, 43, 0.26);
+  --color-text-on-dark:         #FAF8F8;  /* text on dark/burgundy backgrounds */
+  --color-text-linked:          #214342;  /* navigational content titles — no underline */
+
+  /* ─── SHADOWS ────────────────────────────────
+     Use only for floating/contextual elements.
+     In-page content uses border, not shadow.   */
+  --shadow-1:      0px 4px 8px 0px rgba(0, 0, 0, 0.1);  /* modals, dialogs, dropdowns */
+  --shadow-button: rgba(0,0,0,0.2) 0px 3px 1px -2px,    /* MUI elevation 2 — filled buttons */
+                   rgba(0,0,0,0.14) 0px 2px 2px 0px,
+                   rgba(0,0,0,0.12) 0px 1px 5px 0px;
+
+  /* ─── COLORS — Backgrounds ──────────────────── */
+  --color-bg-page:              #FFFFFF;  /* all page backgrounds */
+  --color-bg-subtle:            #FAF8F8;  /* cards, input fields, surface variation */
+  --color-bg-header:            #6E0C0E;  /* site header / hero banners */
+  --color-bg-nav:               #330100;  /* nav bar background (from live site) */
+
+  /* ─── COLORS — Greys ────────────────────────── */
+  --color-grey-border:          #D8D8D8;
+  --color-grey-neutral:         #E0E0E0;
+  --color-grey-medium:          #BDBDBD;
+  --color-grey-muted:           #757575;
+
+  /* ─── COLORS — Status ───────────────────────── */
+  --color-status-error:         #D32F2F;  /* errors + auction urgency countdown */
+  --color-status-success:       #2E7D32;
+  --color-status-warning:       #ED6C02;
+  --color-status-info:          #0288D1;
+
+  /* ─── COLORS — Dark teal ────────────────────── */
+  /* Two uses: product status badge backgrounds + PLP product title text (h3, via --color-text-linked) */
+  --color-badge-green:          #214342;  /* dark teal */
+  --color-badge-green-light:    #5B7F54;
+
+  /* ─── TYPOGRAPHY — Font families ───────────── */
+  --font-family-lora:           'Lora', Georgia, serif;
+  --font-family-roboto:         'Roboto', Arial, Helvetica, sans-serif;
+
+  /* ─── TYPOGRAPHY — Font sizes (variant = theme.typography) ── */
+  --font-size-h1:               30px;  /* Lora 400 — hero / campaign headlines (xs 24px) */
+  --font-size-h2:               22px;  /* Roboto 600 — product title PDP/Auction (xs 20px) */
+  --font-size-h3:               22px;  /* Roboto 700 — product title PLP cards */
+  --font-size-h4:               20px;  /* Roboto 700 — major section headers (xs 18px) */
+  --font-size-h5:               16px;  /* Roboto 700 — subsection headers + CTAs */
+  --font-size-h6:               12px;  /* Roboto 400 — smallest heading scale */
+  --font-size-price1:           28px;  /* Roboto 400 — current bid + PDP price (xs 24px) */
+  --font-size-price2:           24px;  /* Roboto 400 — PLP card price */
+  --font-size-quote:            18px;  /* Lora 500 italic — review pull-quotes */
+  --font-size-nav-main:         22px;  /* Lora 400 uppercase — main navigation */
+  --font-size-body1:            16px;  /* Roboto 400 — ★ body1 (standard body text) */
+  --font-size-body2:            14px;  /* Roboto 400 — body2 (bid panel info, utility nav) */
+  --font-size-subtitle1:        14px;  /* Roboto 400 — subtitle1 (secondary labels, tighter leading) */
+  --font-size-subtitle2:        13px;  /* Roboto 400 — subtitle2 (compact secondary labels) */
+  --font-size-caption:          13px;  /* Roboto 400 — captions, footnotes, legal */
+
+  --font-size-score-chip:       14px;  /* Roboto 700 — score chip numbers, reviewer / publication names */
+
+  /* ─── TYPOGRAPHY — Font weights ────────────── */
+  --font-weight-regular:        400;
+  --font-weight-medium:         500;
+  --font-weight-semibold:       600;  /* h2 — product titles (PDP / Auction) */
+  --font-weight-bold:           700;
+  /* Note: weight 800 is not used in this system */
+
+  /* ─── TYPOGRAPHY — Line heights ────────────── */
+  --line-height-h1:             1.3;   /* hero heading — descenders not clipped */
+  --line-height-h2:             1.2;   /* product title PDP/Auction */
+  --line-height-h3:             1.2;   /* product title PLP cards */
+  --line-height-h4:             1.3;   /* section headers */
+  --line-height-h5:             1.35;  /* subsection headers + CTAs */
+  --line-height-h6:             14px;  /* smallest heading scale */
+  --line-height-price1:         1.15;  /* current bid / main PDP price */
+  --line-height-price2:         1;     /* PLP card price — tight anchor */
+  --line-height-quote:          1.5;   /* review pull-quotes */
+  --line-height-nav-main:       1;     /* main navigation — single line, tight */
+  --line-height-body1:          1.6;   /* body1 — do not reduce below this */
+  --line-height-body2:          1.5;   /* body2 supporting info */
+  --line-height-subtitle1:      1.14;  /* subtitle1 — tighter than body2 */
+  --line-height-subtitle2:      1.15;  /* subtitle2 — tighter than caption */
+  --line-height-caption:        1.4;   /* captions */
+
+  --line-height-score-chip:     1;     /* score chip — single line */
+
+  /* ─── TYPOGRAPHY — Letter spacing ──────────── */
+  --letter-spacing-nav-main:    1px;      /* main nav (Lora uppercase) */
+  --letter-spacing-hairline:    0.3em;   /* section labels (hairline) */
+
+  /* ─── SPACING ───────────────────────────────── */
+  --spacing-xs:                 4px;   /* icon-to-text gap, tight inline */
+  --spacing-sm:                 8px;   /* between small elements */
+  --spacing-md:                 16px;  /* standard gap between elements */
+  --spacing-lg:                 24px;  /* section gaps, larger element spacing (card padding uses --card-padding) */
+  --spacing-xl:                 32px;  /* page section padding (modals use 40px, set per component) */
+  --spacing-2xl:                48px;  /* major section breaks */
+  --max-content-width:          1440px;
+  --max-outer-width:            1536px;
+  --page-padding:               48px;
+
+  /* ─── COMPONENT — Buttons ──────────────────── */
+  --button-border-radius:       4px;
+  --button-padding-y:           10px;
+  --button-padding-x:           24px;
+  --button-font-size:           var(--font-size-h5);          /* 16px */
+  --button-font-weight:         var(--font-weight-bold);      /* 700 */
+
+  /* ─── COMPONENT — Cards ─────────────────────── */
+  --card-border-radius:         4px;
+  --card-border:                1px solid rgba(0, 0, 0, 0.12);  /* MUI <Card variant="outlined"> default */
+  --card-padding:               20px;  /* 20px — PLP product card (MUI spacing 2.5) */
+  --card-gap:                   var(--spacing-md);  /* 16px */
+
+  /* ─── COMPONENT — Inputs ────────────────────── */
+  --input-border-radius:        4px;
+  --input-border:               1px solid var(--color-grey-border);
+  --input-border-focus:         1px solid var(--color-brand-charcoal);
+  --input-height:               40px;
+
+  /* ─── DEBUG HELPER ──────────────────────────
+     Outlines every element to inspect layout.
+     Toggle in browser console:
+     document.body.classList.toggle('debug')
+  */
+  --debug-outline: 1px solid rgba(255, 0, 0, 0.15);
+}
+
+.debug * { outline: var(--debug-outline); }
+
+/* ─── MOBILE + TABLET — below the md (desktop) breakpoint ───────────
+   The responsive variants ship as { xs, md } in the MUI theme, so the xs
+   (mobile) size stays active up to the md breakpoint (960px) — tablet
+   (sm, 600–959px) inherits the mobile size. Mirrors MUI's
+   theme.breakpoints.down("md"); overrides only the sizes that differ
+   from desktop. Everything from 16px down is unchanged.
+   Usage: just use var(--font-size-*) in your CSS — no media queries
+   needed in the HTML files, this file handles the responsive switch.
+*/
+@media (max-width: 959.95px) {
+  :root {
+    --font-size-h1:                24px;  /* ↓ from 30px */
+    --font-size-price1:            24px;  /* ↓ from 28px */
+    --font-size-h2:                20px;  /* ↓ from 22px */
+    --font-size-h4:                18px;  /* ↓ from 20px */
+    /* All other sizes unchanged — 16px and below stays the same */
+  }
+}

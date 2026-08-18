@@ -1,0 +1,876 @@
+/* ============================================================================
+   CHECKOUT SHIPMENT MESSAGING — SHARED MOCKUP STYLES
+   Used by cart-summary.html · shipping-methods.html · order-review.html ·
+   receipt.html
+
+   Every value here comes from KL-Design_System/tokens.css. The only raw hex
+   values are in the MOCKUP TOOLBAR block, which is deliberately outside the
+   design system — it is scaffolding, not part of the design.
+
+   Layout follows KL-Design_System/Docs/layout.md:
+     - wide grid: 1536px wrapper, 16/24/48px gutters, 1440px content cap
+     - header is an in-flow placeholder block, NOT a rebuilt header
+     - two-column = primary ~960px (2/3) + rail ~400px (1/3), 80px gap
+   ============================================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-family-roboto);
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body1);
+  line-height: var(--line-height-body1);
+}
+
+.is-hidden { display: none !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOCKUP TOOLBAR — not part of the design
+   Raw hex is intentional: this chrome must not read as K&L UI.
+   Pattern copied from Mockups/LocalDeliveryScheduler/local-delivery-scheduler.html
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mock-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: #1B1D1F; color: #F3F3F3;
+  padding: 10px 16px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px;
+  font-size: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+.mock-bar__brand { font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .55; }
+.mock-bar__group { display: flex; align-items: center; gap: 6px; }
+.mock-bar__label { opacity: .5; text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+.mock-bar button {
+  font: inherit; font-size: 12px; cursor: pointer;
+  background: #2E3134; color: #D8D8D8; border: 1px solid #43474B;
+  border-radius: 3px; padding: 5px 10px;
+}
+.mock-bar button:hover { background: #3A3E42; }
+.mock-bar button[aria-pressed="true"] { background: #F3F3F3; color: #1B1D1F; border-color: #F3F3F3; font-weight: 700; }
+.mock-bar__spacer { flex: 1; }
+.mock-bar__page {
+  color: #9BA0A5; text-decoration: none; font-size: 11px;
+  border-bottom: 1px dotted #5A5F64; padding-bottom: 1px;
+}
+.mock-bar__page:hover { color: #F3F3F3; }
+.mock-bar__page[aria-current="page"] { color: #F3F3F3; font-weight: 700; border-bottom-color: #F3F3F3; }
+
+/* Deliverable flags — visible in the browser, greppable in source */
+.flag {
+  display: inline-block; vertical-align: middle;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 2px; margin-left: 8px;
+  white-space: nowrap;
+}
+.flag--new      { background: #DCEBDC; color: #1E5720; }
+.flag--changed  { background: #DDE7F5; color: #1B3E70; }
+.flag--proposed { background: #FBE6CC; color: #8A4B00; }
+
+/* Toolbar "Annotations: off" — view the design with no review chrome at all. */
+body.no-flags .flag { display: none; }
+
+/* Shown when a toolbar combination has no groups to render (e.g. Example 3 is
+   Pickup + Pre-arrival, so "All RareStorage" leaves nothing). Mockup chrome —
+   better than a blank column that reads as a bug. */
+.mock-empty {
+  border: 1px dashed #C9A227; background: #FDF8E7; color: #6B5200;
+  border-radius: 4px; padding: 16px; font-size: 13px; line-height: 1.5;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   KL HEADER PLACEHOLDER
+   Per layout.md §"Prototype representation": represent the header as a flat
+   placeholder block — do not rebuild the two-tier header.
+   Source: KL-Design_System/Preview/prototype-header-placeholder.html
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.kl-header { width: 100%; background: var(--color-bg-header); overflow: hidden; }
+
+.kl-header-mobile { display: flex; flex-direction: column; padding: 14px 16px 16px; gap: 4px; }
+.kl-header-mobile-bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 73px; }
+.kl-header-icon-group { display: flex; align-items: center; gap: 4px; }
+.kl-header-icon-group--right { justify-content: flex-end; }
+.kl-header-icon-btn {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.9); background: none; border: none; cursor: default;
+}
+.kl-header-icon-btn svg { width: 28px; height: 28px; fill: currentColor; }
+.kl-header-mobile-logo {
+  font-family: var(--font-family-lora); font-size: 18px; font-weight: 400;
+  color: rgba(255,255,255,.95); text-align: center; letter-spacing: 2px;
+  text-transform: uppercase; line-height: 1;
+}
+.kl-header-search {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.18); border-radius: 4px; padding: 8px 12px; height: 44px;
+}
+.kl-header-search svg { width: 20px; height: 20px; fill: rgba(255,255,255,.6); flex-shrink: 0; }
+.kl-header-search-text { font-size: 14px; color: rgba(255,255,255,.55); white-space: nowrap; overflow: hidden; }
+
+.kl-header-desktop { display: none; }
+
+@media (min-width: 960px) {
+  .kl-header-mobile  { display: none; }
+  .kl-header-desktop { display: block; }
+
+  .kl-header-topbar {
+    height: 132px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; background: var(--color-bg-header);
+  }
+  .kl-header-topbar-zone {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: rgba(255,255,255,.6); flex: 1;
+  }
+  .kl-header-topbar-zone--right { justify-content: flex-end; }
+  .kl-header-topbar-zone svg { width: 18px; height: 18px; fill: rgba(255,255,255,.6); flex-shrink: 0; }
+  .kl-header-topbar-logo {
+    font-family: var(--font-family-lora); font-size: 20px; font-weight: 400;
+    color: rgba(255,255,255,.95); letter-spacing: 2px; text-transform: uppercase;
+    white-space: nowrap; flex: 0; padding: 0 24px;
+  }
+  .kl-header-navbar {
+    height: 56px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; background: var(--color-bg-nav);
+  }
+  .kl-header-nav-item {
+    font-family: var(--font-family-lora); font-size: var(--font-size-nav-main); font-weight: 400;
+    color: var(--color-brand-off-white); text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-nav-main); line-height: var(--line-height-nav-main);
+    white-space: nowrap;
+  }
+}
+@media (min-width: 1200px) {
+  .kl-header-topbar, .kl-header-navbar { padding: 0 48px; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PAGE GRID — layout.md wide grid
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.page-container {
+  max-width: var(--max-outer-width);   /* 1536px */
+  margin: 0 auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+@media (min-width: 960px)  { .page-container { padding-left: 24px; padding-right: 24px; } }
+@media (min-width: 1200px) { .page-container { padding-left: var(--page-padding); padding-right: var(--page-padding); } }
+
+/* Content flows immediately below the in-flow header — no top offset. */
+.page-body { padding-top: var(--spacing-xl); padding-bottom: 80px; }
+
+/* Two-column: primary ~2/3 left, rail ~1/3 right, 80px gap.
+   At the 1440px cap this resolves to exactly 960 + 80 + 400. */
+.checkout-layout { display: grid; grid-template-columns: 1fr; gap: var(--spacing-xl); }
+@media (min-width: 1200px) {
+  .checkout-layout {
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 80px;
+    align-items: start;
+  }
+}
+
+.checkout-main { min-width: 0; }
+.checkout-rail { min-width: 0; }
+@media (min-width: 1200px) { .checkout-rail { position: sticky; top: var(--spacing-md); } }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY ROLES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.t-h4 {
+  font-size: var(--font-size-h4); line-height: var(--line-height-h4);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+}
+.t-h5 {
+  font-size: var(--font-size-h5); line-height: var(--line-height-h5);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+}
+.t-body1 { font-size: var(--font-size-body1); line-height: var(--line-height-body1); }
+.t-body2 { font-size: var(--font-size-body2); line-height: var(--line-height-body2); }
+.t-caption {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+}
+.t-secondary { color: var(--color-text-secondary); }
+.t-bold { font-weight: var(--font-weight-bold); }
+
+/* Inline body link — text.primary + underline. Never burgundy (colors.md Rule 2). */
+.t-link { color: var(--color-text-primary); text-decoration: underline; cursor: pointer; }
+
+/* Section eyebrow — hairline uppercase label */
+.eyebrow {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  font-weight: var(--font-weight-bold); color: var(--color-text-secondary);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+
+.page-title { margin-bottom: var(--spacing-lg); display: flex; align-items: baseline; justify-content: space-between; gap: var(--spacing-md); flex-wrap: wrap; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ORDER-LEVEL SUMMARY  >>> DELIVERABLE <<<
+   The new "what is happening to my order" statement above the groups.
+   Surface = background.subtle + card border. There is no beige in the palette.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Treatment E — no fill, no box. A hairline rule beneath, reusing the SAME
+   0.5px divider that separates shipments, so the page has one line system and
+   the summary reads as "the thing above the list" rather than a panel. */
+.order-summary-msg {
+  padding-bottom: var(--spacing-md);
+  border-bottom: 0.5px solid var(--color-grey-border);
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;   /* single line: icon · statement · quantity */
+}
+/* Charcoal — the default icon colour. Burgundy is reserved for icons that are
+   deliberately accented (see .ship-group__icon on the pre-arrival heading). */
+.order-summary-msg__icon { flex-shrink: 0; width: 24px; height: 24px; fill: var(--color-brand-charcoal); }
+.order-summary-msg__body { min-width: 0; flex: 1; }
+
+/* Quantity at the right-hand end of the summary line. Secondary weight — it is
+   a figure the shopper checks, not the statement they read first. */
+.order-summary-msg__qty {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.order-summary-msg__title {
+  font-size: var(--font-size-h5); line-height: var(--line-height-h5);
+  font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-xs);
+}
+/* Shipping variant is title-only — no trailing gap under a lone line. */
+.order-summary-msg__title:last-child { margin-bottom: 0; }
+.order-summary-msg__text {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-primary);
+}
+.order-summary-msg__text + .order-summary-msg__text { margin-top: var(--spacing-sm); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SHIPMENT GROUP  >>> DELIVERABLE <<<
+
+   components.md:42 — "prefer spacing to signal separation… a gap communicates
+   a break more cleanly than a line." So the primary separator between groups
+   is a 48px gap plus a bold heading and a count, NOT a box.
+
+   .ship-group--flagged adds a card border, used only on groups that carry a
+   constraint the shopper must not miss (RareStorage transfer, pre-arrival).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* No cards. Groups are separated by a divider with generous space either side,
+   and every group sits flush on the same left edge — layout.md calls that
+   shared left baseline "the fundamental alignment grid of the site".
+
+   Spacing carries the separation; the rule is there to make the boundary
+   unambiguous at a glance. 32px above and below, so the line reads as
+   belonging to neither group. */
+.ship-groups { display: flex; flex-direction: column; gap: var(--spacing-xl); }
+
+.ship-group { min-width: 0; }
+
+/* Applied by checkout-mock.js to every VISIBLE group except the first.
+
+   Do not revert this to `.ship-group + .ship-group`. A CSS sibling selector
+   ignores .is-hidden, so whenever the toolbar hides an earlier group it draws a
+   rule above the first visible one — which lands directly under the order
+   summary's own bottom border and reads as a double line. */
+.ship-group.has-divider {
+  border-top: 0.5px solid var(--color-grey-border);
+  padding-top: var(--spacing-xl);
+}
+
+.ship-group__head { margin-bottom: var(--spacing-sm); }
+
+/* Charcoal, not grey — this is the marker the shopper counts when scanning, so
+   it has to survive a glance. Hierarchy against the heading below is carried by
+   size and case (13px uppercase vs 16px sentence case), not by colour, so the
+   heading keeps text.primary and never reads as disabled. */
+.ship-group__eyebrow {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+  text-transform: uppercase; letter-spacing: .08em;
+  display: flex; align-items: center; gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Pipe — 3×14px, carried over from the prior checkout redesign
+   (Mockups/checkout-width/checkout-shipping.html `.shipment-bar`). Three
+   repeated marks on the left edge are what make "three shipments" countable
+   without reading. */
+.ship-group__eyebrow::before {
+  content: "";
+  width: 3px; height: 14px; border-radius: 2px; flex-shrink: 0;
+  background: var(--color-brand-charcoal);
+}
+
+/* Deferred groups (pre-arrival / special order) take the burgundy pipe, the
+   same accent as their AccessTime icon. */
+.ship-group--deferred .ship-group__eyebrow::before {
+  background: var(--color-brand-burgundy);
+}
+
+.ship-group__title-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--spacing-md); flex-wrap: wrap;
+}
+.ship-group__title {
+  font-size: var(--font-size-h5); line-height: var(--line-height-h5);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+  display: flex; align-items: center; gap: var(--spacing-xs);
+}
+
+/* Leading icon on a group heading — burgundy, matching the icon treatment used
+   elsewhere on the page (e.g. the deliver-to pin). Sized to the h5 it sits on. */
+.ship-group__icon {
+  width: 20px; height: 20px; flex-shrink: 0;
+  fill: var(--color-brand-burgundy);
+}
+/* Fee on the right of the group heading, so it lands in the same right-hand
+   price column as the amounts on the method rows below. Used where a shipment
+   has one known flat fee (local delivery) rather than a list of priced options. */
+.ship-group__fee {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-primary); white-space: nowrap;
+}
+/* .ship-group__fee--stacked removed with the "Transfer fee: $0.00" line it was
+   built for. FIXED shipments quote no fee at all now — see NOTES.md §6. */
+
+/* Per-group item/bottle count — DROPPED as superfluous (the items are listed
+   right below). Style kept so it can be restored without a rebuild. */
+.ship-group__count {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-secondary); white-space: nowrap;
+}
+
+/* The timing / constraint sentence. */
+.ship-group__msg {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+  max-width: 640px;
+}
+.ship-group__msg strong { font-weight: var(--font-weight-bold); }
+
+/* Consecutive message lines that belong together as one block. The default 16px
+   makes them read as two unrelated statements.
+
+   Applied as an explicit modifier rather than via `:not(:last-of-type)`, because
+   several groups hold multiple message VARIANTS (zip entered / not entered,
+   pre-arrival / special order) where only one shows at a time — a structural
+   selector would mis-space whichever variant happened to be visible.
+
+   Use it sparingly. A group's FIRST message keeps the default 16px so the gap
+   below it matches shipment 1's message-to-chosen-method gap; every shipment
+   should breathe the same way. The only genuinely paired lines left are local
+   delivery's two-sentence explanation in Example 2.                         */
+.ship-group__msg--tight { margin-bottom: var(--spacing-xs); }
+
+/* Secondary explainer under the main message. */
+.ship-group__note {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+  margin-top: calc(var(--spacing-md) * -1 + var(--spacing-sm));
+  margin-bottom: var(--spacing-md);
+  max-width: 640px;
+}
+
+/* Items inside a group are one set — no rules between them. Space alone
+   separates the rows, which is what makes the group read as a single unit. */
+.ship-group__items { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+
+/* ── Sub-section within a shipment ────────────────────────────────────────
+   Local delivery consolidates several source stores into ONE shipment, but
+   each source has its own timing. So the group stays one shipment, and the
+   sources become sub-sections beneath it.
+
+   Deliberately quieter than a group heading: no pipe, no eyebrow, no rule —
+   otherwise a sub-section would read as another shipment and defeat the whole
+   point of consolidating them. */
+.ship-sub + .ship-sub { margin-top: var(--spacing-lg); }
+
+.ship-sub__head {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  font-weight: var(--font-weight-regular);   /* 14px regular — body2 */
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CART ITEM ROW
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: var(--spacing-md);
+  align-items: start;
+}
+
+.cart-item__thumb {
+  width: 56px; height: 84px;
+  background: var(--color-bg-subtle);
+  border-radius: var(--card-border-radius);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.cart-item__thumb svg { width: 22px; height: 60px; }
+
+.cart-item__body { min-width: 0; }
+.cart-item__name {
+  font-size: var(--font-size-h5); line-height: var(--line-height-h5);
+  font-weight: var(--font-weight-bold); color: var(--color-text-linked);
+  margin-bottom: var(--spacing-xs);
+}
+.cart-item__unit {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+}
+.cart-item__total {
+  font-size: var(--font-size-body1); line-height: var(--line-height-body1);
+  color: var(--color-text-primary); margin-top: var(--spacing-xs);
+}
+.cart-item__actions { display: flex; gap: var(--spacing-md); margin-top: var(--spacing-sm); }
+.cart-item__action {
+  font-size: var(--font-size-caption); color: var(--color-text-primary);
+  text-decoration: underline; cursor: pointer;
+}
+
+.cart-item__qty { display: flex; flex-direction: column; align-items: flex-end; gap: var(--spacing-sm); }
+
+.qty-stepper {
+  display: flex; align-items: center;
+  border: var(--input-border); border-radius: var(--input-border-radius);
+  height: var(--input-height); overflow: hidden;
+}
+.qty-stepper button {
+  width: 32px; height: 100%; border: none; background: none; cursor: pointer;
+  font-size: 18px; color: var(--color-text-primary); font-family: inherit; line-height: 1;
+}
+.qty-stepper button:hover { background: var(--color-bg-subtle); }
+.qty-stepper__value {
+  min-width: 36px; text-align: center;
+  font-size: var(--font-size-body2); color: var(--color-text-primary);
+  border-left: var(--input-border); border-right: var(--input-border);
+  height: 100%; display: flex; align-items: center; justify-content: center;
+}
+
+/* Split-quantity note — one SKU spanning two groups (scenario grid §7.4).
+   DEFERRED to a later phase; style kept here so it can be dropped back in. */
+.cart-item__split {
+  grid-column: 2 / -1;
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CALLOUT PANEL — RareStorage explainer and similar
+   background.subtle + border. No beige; colors.md has no such token.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.callout {
+  background: var(--color-bg-subtle);
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
+  padding: var(--card-padding);
+  margin-top: var(--spacing-md);
+}
+.callout__title {
+  font-size: var(--font-size-h5); line-height: var(--line-height-h5);
+  font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-sm);
+}
+.callout__text {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-primary);
+}
+.callout__list { margin: var(--spacing-sm) 0 0; padding-left: 18px; }
+.callout__list li {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  margin-bottom: var(--spacing-xs);
+}
+.callout__list li:last-child { margin-bottom: 0; }
+
+/* ── Disclosure — detail that must exist but must not sit inline ──────────
+   Native <details>. One line closed; the full terms are one click away. This
+   is what keeps the cart scannable without losing the legal/storage copy. */
+.disclose { margin-top: var(--spacing-sm); }
+.disclose > summary {
+  cursor: pointer; list-style: none;
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-primary); text-decoration: underline;
+  display: inline-flex; align-items: center; gap: var(--spacing-xs);
+}
+.disclose > summary::-webkit-details-marker { display: none; }
+.disclose > summary::after {
+  content: ""; width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--color-grey-muted);
+  transition: transform .15s;
+}
+.disclose[open] > summary::after { transform: rotate(180deg); }
+.disclose__body { margin-top: var(--spacing-sm); }
+.disclose__body .callout__list li {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   "ITEM(S) BELOW…" AS A DISCLOSURE  (shipping page)
+   >>> DELIVERABLE <<<
+
+   Every sentence that points AT a list of items becomes the control that
+   reveals it. The sentence was already doing the pointing — "item(s) below" —
+   it just had nothing below it on this page.
+
+   Same caret idiom as .disclose, but at body2 rather than caption, because this
+   IS the group's message, not a footnote hung off it. Underline + text.primary
+   per colors.md Rule 2 — never burgundy for a text link.
+   ══════════════════════════════════════════════════════════════════════════ */
+.items-disclose { margin-bottom: var(--spacing-md); }
+.items-disclose > summary {
+  cursor: pointer; list-style: none;
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-primary);
+  display: flex; align-items: baseline; gap: var(--spacing-sm);
+  max-width: 640px;
+}
+.items-disclose > summary::-webkit-details-marker { display: none; }
+/* Underline sits on the text, not the row, so the caret is not underlined. */
+.items-disclose__label { text-decoration: underline; }
+.items-disclose > summary::after {
+  content: ""; flex-shrink: 0; width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--color-grey-muted);
+  transition: transform .15s;
+}
+.items-disclose[open] > summary::after { transform: rotate(180deg); }
+/* Locked shipments dim their messages; the disclosure is one of them. */
+.ship-group.is-locked .items-disclose > summary { opacity: .55; }
+
+/* Revealed items — a PREVIEW, not the cart. No steppers, no Remove, no
+   Favorites, no unit price: nothing editable and nothing to re-decide, because
+   this page is about how a shipment travels, not what is in the basket. That is
+   also why the rows are half the height of the cart's. */
+.item-preview {
+  margin-top: var(--spacing-md); margin-bottom: var(--spacing-lg);
+  display: flex; flex-direction: column; gap: var(--spacing-md);
+  max-width: 640px;
+}
+.item-preview__row { display: flex; align-items: center; gap: var(--spacing-md); }
+.item-preview__thumb {
+  width: 32px; height: 48px; flex-shrink: 0;
+  background: var(--color-bg-subtle);
+  border-radius: var(--card-border-radius);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.item-preview__thumb svg { width: 13px; height: 36px; }
+/* Product names navigate, so they keep colors.text.linked — same as the cart. */
+.item-preview__name {
+  flex: 1; min-width: 0;
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-linked);
+}
+.item-preview__qty {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-secondary); white-space: nowrap;
+}
+.item-preview__total {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-primary); white-space: nowrap;
+}
+
+/* Compact inline notice used inside a group */
+.inline-note {
+  display: flex; gap: var(--spacing-sm); align-items: flex-start;
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-sm);
+}
+.inline-note svg { width: 16px; height: 16px; flex-shrink: 0; fill: var(--color-grey-muted); margin-top: 1px; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RAIL CARDS — summary, prep-time estimator
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.rail-card {
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
+  padding: var(--card-padding);
+  background: var(--color-bg-page);
+}
+.rail-card + .rail-card { margin-top: var(--spacing-md); }
+
+.rail-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-body1); line-height: var(--line-height-body1);
+  margin-bottom: var(--spacing-sm);
+}
+.rail-row:last-of-type { margin-bottom: 0; }
+.rail-row--total {
+  font-size: var(--font-size-h4); font-weight: var(--font-weight-bold);
+  border-top: 0.5px solid var(--color-grey-border);
+  padding-top: var(--spacing-md); margin-top: var(--spacing-md);
+}
+.rail-row__value { font-variant-numeric: tabular-nums; }
+
+.rail-card__title {
+  font-size: var(--font-size-h5); line-height: var(--line-height-h5);
+  font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-sm);
+}
+.rail-card__help {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary); margin-bottom: var(--spacing-md);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BUTTONS — components.md. Burgundy = commerce CTA. Sentence case. 16/700.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.btn {
+  font-family: inherit; cursor: pointer;
+  border-radius: var(--button-border-radius);
+  padding: var(--button-padding-y) var(--button-padding-x);
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  line-height: var(--line-height-h5);
+  border: 1px solid transparent;
+}
+.btn--primary {
+  background: var(--color-brand-burgundy);
+  color: var(--color-text-on-dark);
+  box-shadow: var(--shadow-button);
+}
+.btn--outlined {
+  background: transparent;
+  color: var(--color-brand-charcoal);
+  border-color: var(--color-brand-charcoal);
+}
+.btn--block { width: 100%; display: block; }
+.btn + .btn { margin-top: var(--spacing-md); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FORM CONTROLS
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.field { margin-bottom: var(--spacing-md); }
+.field__label {
+  display: block;
+  font-size: var(--font-size-subtitle2); font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);
+}
+.field__input {
+  width: 100%; height: var(--input-height);
+  border: var(--input-border); border-radius: var(--input-border-radius);
+  background: var(--color-bg-page);
+  padding: 8px 12px;
+  font-family: inherit; font-size: var(--font-size-body2);
+  color: var(--color-text-primary);
+}
+.field__input::placeholder { color: var(--color-grey-medium); }
+.field__input:focus { outline: none; border: var(--input-border-focus); }
+select.field__input { height: var(--input-height); cursor: pointer; }
+
+/* Radio option row — shipping method choices */
+.option {
+  display: flex; align-items: center; gap: var(--spacing-sm);
+  border: var(--input-border); border-radius: var(--input-border-radius);
+  padding: 12px var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  cursor: pointer;
+  font-size: var(--font-size-body2);
+}
+.option:hover { background: var(--color-bg-subtle); }
+.option--selected { border: 1px solid var(--color-brand-charcoal); }
+.option__radio {
+  width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--color-grey-muted);
+  display: flex; align-items: center; justify-content: center;
+}
+.option--selected .option__radio { border-color: var(--color-brand-charcoal); }
+.option--selected .option__radio::after {
+  content: ""; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--color-brand-charcoal);
+}
+.option__label { flex: 1; }
+.option__price { font-variant-numeric: tabular-nums; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SHIPPING PAGE
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Delivery / Pick Up tabs — existing component, carried over unchanged. */
+.tabs { display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-xl); }
+.tab {
+  flex: 1; text-align: center; cursor: pointer;
+  padding: var(--button-padding-y) var(--button-padding-x);
+  border-radius: var(--button-border-radius);
+  font-size: var(--button-font-size); font-weight: var(--button-font-weight);
+  line-height: var(--line-height-h5);
+  border: 1px solid transparent;
+}
+.tab--on  { background: var(--color-brand-burgundy); color: var(--color-text-on-dark); box-shadow: var(--shadow-button); }
+.tab--off { background: var(--color-grey-neutral); color: var(--color-text-primary); }
+
+.section-heading {
+  font-size: var(--font-size-h4); line-height: var(--line-height-h4);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.addr {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--spacing-md); margin-bottom: var(--spacing-xl);
+}
+.addr__lines { font-size: var(--font-size-body1); line-height: var(--line-height-body1); }
+.addr__edit { width: 20px; height: 20px; fill: var(--color-grey-muted); flex-shrink: 0; cursor: pointer; }
+
+/* ── Progressive disclosure ───────────────────────────────────────────────
+   Carried over from the live page: a shipment's options appear only once the
+   previous shipment has a method chosen.
+
+   This applies ONLY to shipments that actually ask a question. Three states:
+     locked → heading + message only
+     open   → options visible
+     done   → chosen method + Edit, options collapsed again
+
+   FIXED shipments (RareStorage, pre-arrival) have no options block, no chosen
+   row and no radio — one method is not a choice. They use .ship-group__msg for
+   everything, so `is-locked` dims them and the open state simply undims. Do not
+   give them an options block "for consistency": that is what put a single radio
+   on the RareStorage shipment and made it gate-keep the shipment below it.   */
+.ship-group__options { margin-top: var(--spacing-md); }
+
+.ship-group.is-locked .ship-group__options,
+.ship-group.is-locked .ship-group__chosen,
+.ship-group.is-done   .ship-group__options,
+.ship-group.is-open   .ship-group__chosen { display: none; }
+
+/* .ship-group--keep-options removed. Local delivery used to keep its two option
+   cards visible after choosing, on the grounds that the heading already carried
+   the fee. It now behaves like every other CHOOSE shipment — collapse to the
+   resulting fee + pencil — so the before/after distinction is the same wherever
+   the shopper is asked something. */
+
+.ship-group__chosen {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--spacing-md); margin-top: var(--spacing-sm);
+  font-size: var(--font-size-body2);
+}
+.ship-group__chosen svg { width: 18px; height: 18px; fill: var(--color-grey-muted); cursor: pointer; flex-shrink: 0; }
+
+/* Locked shipments read as not-yet-your-turn without being greyed illegibly.
+   The fee dims with the heading it sits beside — left at full strength it was
+   the brightest thing in a dimmed group. */
+.ship-group.is-locked .ship-group__title,
+.ship-group.is-locked .ship-group__fee,
+.ship-group.is-locked .ship-group__msg { opacity: .55; }
+
+/* "or" rule between carrier options and the RareStorage alternative. */
+.or-rule {
+  display: flex; align-items: center; gap: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  font-size: var(--font-size-caption); color: var(--color-text-secondary);
+}
+.or-rule::before, .or-rule::after {
+  content: ""; flex: 1; border-top: 0.5px solid var(--color-grey-border);
+}
+
+.option--star { font-weight: var(--font-weight-bold); }
+
+/* RareStorage explainer, expanded. On the cart this is collapsed behind a
+   disclosure; here it is open, because the shipping page is where the shopper
+   needs the detail and is the last point they can choose against it.
+
+   Surface is background.subtle (#FAF8F8) with the standard card border — the
+   only surface-variation token in colors.md. The live page uses a cream fill
+   that is not in the palette. */
+.rs-panel { margin-top: var(--spacing-md); }
+.ship-group.is-locked .rs-panel { display: none; }
+.rs-panel .callout__text + .callout__list { margin-top: var(--spacing-sm); }
+
+/* .prearrival-note removed. Pre-arrival's sentences are now plain
+   .ship-group__msg paragraphs, identical to the RareStorage shipment, because
+   both are FIXED shipments and should not look like different mechanisms.
+   The old rules only restated .ship-group__msg + --tight anyway. */
+
+.checkbox { display: flex; gap: var(--spacing-sm); align-items: flex-start; cursor: pointer; }
+.checkbox__box {
+  width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
+  border: var(--input-border); border-radius: var(--card-border-radius);
+  background: var(--color-bg-page);
+}
+.checkbox__label { font-size: var(--font-size-body2); line-height: var(--line-height-body2); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DIVIDERS / MISC
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.divider { border: none; border-top: 0.5px solid var(--color-grey-border); margin: var(--spacing-lg) 0; }
+
+.delivery-banner {
+  display: flex; align-items: center; gap: var(--spacing-xs);
+  font-size: var(--font-size-body2); color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+.delivery-banner svg { width: 18px; height: 18px; fill: var(--color-brand-burgundy); }
+
+.status-chip {
+  display: inline-flex; align-items: center; gap: var(--spacing-xs);
+  background: var(--color-bg-subtle);
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
+  padding: 4px 10px;
+  font-size: var(--font-size-caption);
+  color: var(--color-text-primary);
+}
+.status-chip::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--color-grey-muted);
+}
+
+.success-banner {
+  background: var(--color-status-success);
+  color: var(--color-text-on-dark);
+  text-align: center;
+  padding: var(--spacing-md);
+  font-size: var(--font-size-h5);
+  font-weight: var(--font-weight-bold);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FOOTER PLACEHOLDER — context only, not the deliverable
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.kl-footer {
+  background: var(--color-bg-header);
+  color: var(--color-text-on-dark);
+  padding: var(--spacing-xl) 0;
+  margin-top: 80px;
+}
+.kl-footer__inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--spacing-lg); flex-wrap: wrap;
+}
+.kl-footer__logo {
+  font-family: var(--font-family-lora); font-size: 20px;
+  letter-spacing: 2px; text-transform: uppercase; opacity: .95;
+}
+.kl-footer__links { display: flex; gap: var(--spacing-lg); flex-wrap: wrap; font-size: var(--font-size-body2); opacity: .8; }

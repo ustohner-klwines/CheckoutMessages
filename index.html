@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K&L — Checkout Shipment Messaging</title>
+
+<!--
+  LANDING PAGE for the checkout shipment messaging prototypes.
+
+  This file lives ONLY in the deploy repo — sync.sh never overwrites it. When a
+  new prototype is added, add a card for it here by hand; sync.sh copies the
+  file but cannot link it, and will warn about any prototype it cannot find a
+  link for.
+-->
+
+<link rel="stylesheet" href="KL-Design_System/tokens.css">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--color-bg-page);
+    font-family: var(--font-family-roboto);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+  .hero { background: var(--color-bg-header); color: var(--color-text-on-dark); padding: 40px 24px 44px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  .hero__logo {
+    font-family: var(--font-family-lora); font-size: 24px; letter-spacing: .08em;
+    text-transform: uppercase; margin: 0 0 18px;
+  }
+  .hero__title { font-family: var(--font-family-lora); font-size: 30px; font-weight: 400; margin: 0 0 10px; }
+  .hero__sub { font-size: var(--font-size-body1); opacity: .85; margin: 0; max-width: 620px; line-height: 1.5; }
+
+  main { padding: 40px 24px 64px; }
+  .lede {
+    font-size: var(--font-size-body1); line-height: 1.6; max-width: 620px;
+    margin: 0 0 8px;
+  }
+  .lede--note { font-size: var(--font-size-body2); color: var(--color-text-secondary); margin: 0 0 36px; }
+
+  .cards { list-style: none; margin: 0 0 44px; padding: 0; display: grid; gap: 20px; }
+  .card {
+    display: block; text-decoration: none; color: inherit;
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+  }
+  .card:hover { background: var(--color-bg-subtle); }
+  .card__eyebrow {
+    font-size: var(--font-size-caption); font-weight: var(--font-weight-bold);
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--color-text-secondary); display: block; margin-bottom: 6px;
+  }
+  .card__title {
+    font-size: var(--font-size-h4); font-weight: var(--font-weight-bold);
+    color: var(--color-text-linked); margin: 0 0 6px;
+  }
+  .card__desc { font-size: var(--font-size-body2); line-height: 1.55; margin: 0; max-width: 60ch; }
+
+  .examples { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: var(--font-size-caption); text-decoration: none;
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-grey-border);
+    border-radius: var(--card-border-radius);
+    padding: 5px 10px; background: var(--color-brand-white);
+  }
+  .chip:hover { background: var(--color-bg-subtle); }
+
+  h2 {
+    font-size: var(--font-size-h5); font-weight: var(--font-weight-bold);
+    margin: 0 0 12px; padding-top: 28px;
+    border-top: 1px solid var(--color-grey-border);
+  }
+  .fine { font-size: var(--font-size-body2); line-height: 1.65; color: var(--color-text-secondary); max-width: 68ch; }
+  .fine strong { color: var(--color-text-primary); }
+  .fine code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+    background: var(--color-bg-subtle); border: 1px solid var(--color-grey-border);
+    border-radius: 3px; padding: 1px 5px;
+  }
+  @media (min-width: 700px) { .hero { padding: 56px 48px 60px; } main { padding: 48px 48px 80px; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="hero__logo">K&amp;L Wine Merchants</p>
+    <h1 class="hero__title">Checkout Shipment Messaging</h1>
+    <p class="hero__sub">
+      Design references for the checkout messaging redesign. Every page carries a toolbar at the
+      top &mdash; that toolbar is not part of the design, it switches between scenarios so one
+      page can show many.
+    </p>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="lede">
+    The problem these address: a shopper whose order splits across warehouses sees several
+    near-identical blocks and is never told how they relate &mdash; or, in the case of New York
+    stock, that it is going into a RareStorage account rather than to their door.
+  </p>
+  <p class="lede lede--note">Desktop only in this round. Mobile is round&nbsp;2.</p>
+
+  <ul class="cards">
+    <li>
+      <a class="card" href="Mockups/CheckoutMessage/cart-summary.html">
+        <span class="card__eyebrow">Cart Summary &middot; /b</span>
+        <h3 class="card__title">Cart Summary</h3>
+        <p class="card__desc">
+          Shipment groups with an order-level summary above them, dividers instead of cards, and
+          the RareStorage transfer stated where it was previously left unsaid.
+        </p>
+      </a>
+      <div class="examples">
+        <a class="chip" href="Mockups/CheckoutMessage/cart-summary.html?fulfilment=shipping">1 &middot; Shipping</a>
+        <a class="chip" href="Mockups/CheckoutMessage/cart-summary.html?fulfilment=delivery">2 &middot; Local Delivery</a>
+        <a class="chip" href="Mockups/CheckoutMessage/cart-summary.html?fulfilment=pickup">3 &middot; Pickup</a>
+        <a class="chip" href="Mockups/CheckoutMessage/cart-summary.html?fulfilment=rsonly">4 &middot; RS-only address</a>
+        <a class="chip" href="Mockups/CheckoutMessage/cart-summary.html?zip=no">No ZIP entered</a>
+        <a class="chip" href="Mockups/CheckoutMessage/cart-summary.html?flags=off">Annotations off</a>
+      </div>
+    </li>
+
+    <li>
+      <a class="card" href="Mockups/CheckoutMessage/shipping-methods.html">
+        <span class="card__eyebrow">Shipping Methods &middot; /checkout/shipping</span>
+        <h3 class="card__title">Shipping Methods</h3>
+        <p class="card__desc">
+          Shipments split into those that ask the shopper something and those that do not, with a
+          before/after pair for the first and no radio at all for the second. Each
+          &ldquo;item(s)&nbsp;below&rdquo; sentence opens the products it points at.
+        </p>
+      </a>
+      <div class="examples">
+        <a class="chip" href="Mockups/CheckoutMessage/shipping-methods.html?fulfilment=shipping&amp;progress=before">1 &middot; before selection</a>
+        <a class="chip" href="Mockups/CheckoutMessage/shipping-methods.html?fulfilment=shipping&amp;progress=after">1 &middot; after selection</a>
+        <a class="chip" href="Mockups/CheckoutMessage/shipping-methods.html?fulfilment=delivery&amp;progress=before">2 &middot; Local Delivery</a>
+        <a class="chip" href="Mockups/CheckoutMessage/shipping-methods.html?fulfilment=pickup">3 &middot; Pickup</a>
+        <a class="chip" href="Mockups/CheckoutMessage/shipping-methods.html?fulfilment=rsonly">4 &middot; RS-only address</a>
+        <a class="chip" href="Mockups/CheckoutMessage/shipping-methods.html?flags=off">Annotations off</a>
+      </div>
+    </li>
+  </ul>
+
+  <h2>Reading these</h2>
+  <p class="fine">
+    <strong>Green &ldquo;New&rdquo; and blue &ldquo;Reworded&rdquo; tags</strong> mark what has
+    changed against the live page. Switch them off with the <strong>Annotations</strong> control,
+    or the link above, for a clean read.
+    <br><br>
+    <strong>Every scenario is linkable.</strong> The toolbar writes to the query string, so any
+    state can be sent to someone directly &mdash; the chips above are just examples.
+    <br><br>
+    <strong>Order review and receipt are not built yet.</strong> Their toolbar links are present
+    and will 404.
+    <br><br>
+    <strong>The decision record is deliberately not published here.</strong>
+    <code>NOTES.md</code> holds the copy rules, the deviations from the requirements doc and the
+    open questions, and it lives in the design-system repo only &mdash; this site is public.
+  </p>
+</main>
+
+</body>
+</html>
