@@ -49,7 +49,7 @@ DS="$(cd "$SRC/../.." && pwd)"                          # design-system root
 cd "$HERE"
 
 DEST="$HERE/Mockups/CheckoutMessage"
-PROTOS=(cart-summary.html shipping-methods.html)
+PROTOS=(cart-summary.html shipping-methods.html order-review.html)
 
 echo "→ source:  $SRC"
 echo "→ tokens:  $DS/KL-Design_System/tokens.css"

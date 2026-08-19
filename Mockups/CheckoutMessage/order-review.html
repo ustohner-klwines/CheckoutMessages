@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K&L — Order Review (Shipment Messaging)</title>
+
+<!--
+  ============================================================================
+  ORDER REVIEW — shipment messaging redesign
+  Target: KLWines.ReactWeb
+          src/components/Checkout/OrderReview/OrderReview.tsx
+          src/components/Checkout/OrderReview/OrderPricingSummary.tsx
+          src/components/Checkout/common/OrderNumber.tsx
+          src/components/Checkout/common/DeliveryDetailsSummary.tsx  (compact)
+          src/components/Checkout/common/RareStorageTransferNotice.tsx
+          src/components/Checkout/common/CartList.tsx + CartNotice.tsx
+  ============================================================================
+
+  WHAT THIS PAGE IS FOR
+    The last page before the money moves. Nothing here is a decision except
+    "place the order", so every shipment is FIXED in the sense of NOTES.md §6 —
+    which makes this the page where the shipment story either matches what the
+    shopper was told twice already, or contradicts it.
+
+  >>> DELIVERABLE 1 — THE SPLIT KEEPS ITS NAME: "SHIPMENT", NOT "ORDER" <<<
+    Live copy is `Order 1 of 3 — FedEx 3-Day` (OrderNumber.tsx). The cart and
+    the shipping page both call the same thing SHIPMENT 1 OF 3, so the shopper
+    meets a third word for it on the third page — and "order" is the one word
+    that already means something else here: they believe they are placing ONE
+    order. Same eyebrow, same pipe, same headings as the earlier two pages.
+
+  >>> DELIVERABLE 2 — THE CHOSEN METHOD AND ITS FEE, WHERE THERE IS ONE <<<
+    Live shows `Shipping Fee: $0.00` on every shipment, RareStorage and
+    pre-arrival included, plus `Excludes RareStorage shipping rates`. A $0.00
+    answers a question nobody asked (NOTES.md §6). So:
+        shipment that asked something  →  method + fee + pencil back to Shipping
+        shipment that asked nothing    →  no fee line at all
+    The pencil is new: today the review page states a carrier the shopper
+    cannot get back to without going through the address block.
+
+  >>> DELIVERABLE 3 — THE SAME SENTENCES, ONE PER SHIPMENT <<<
+    The live page prints the server's AvailabilityMessage per shipment via
+    CartNotice — the same "Item(s) below normally ship from RareStorage New
+    York in 1-2 days." that the cart redesign exists to replace. Fixed here in
+    the same words used on the other two pages, so all three agree.
+
+    NO DISCLOSURES ON THIS PAGE. The bottles are listed openly, so a sentence
+    that says "item(s) below" is literally true and needs no caret — same
+    reasoning as the cart (NOTES.md §10). Sub-groups are plain sub-headings.
+
+  >>> DELIVERABLE 4 — THE RARESTORAGE TERMS ATTACH TO THE FACT <<<
+    Collapsed "What RareStorage means", as on the cart, on the shipment that
+    transfers. Not the beige RareStorageTransferNotice, which is a third
+    wording of the same terms in a colour that is not in colors.md.
+    This also closes the gap flagged in NOTES.md §14: on the shipping page the
+    explainer hangs off a CHOICE, so declining the choice hides the terms for a
+    transfer that happens anyway. Here it hangs off the transfer itself.
+
+  >>> DELIVERABLE 5 — FEE WORDING IN THE TOTALS <<<
+    Live labels the row `Delivery Fee` whatever the method is. "Delivery" means
+    Local Delivery only (NOTES.md, word rule), so: Shipping / Delivery fee /
+    absent. Pickup and the RS-only address have no fee row, and the
+    "Excludes RareStorage shipping rates" row becomes the sentence the cart
+    already uses: "Shipping from RareStorage is charged separately."
+
+  READ-ONLY ITEM ROWS
+    The cart's rows minus every control — no stepper, no Remove, no Favorites.
+    The amounts STAY, unlike the shipping page's preview rows: this is the page
+    where the shopper checks what they are paying for.
+
+  NOT DESIGNED HERE
+    Gift order and Additional comments are the live blocks, present for
+    context. Insurance is off in all four examples. Mobile is round 2.
+    Tax figures are illustrative — see NOTES.md.
+-->
+
+<link rel="stylesheet" href="../../KL-Design_System/tokens.css">
+<link rel="stylesheet" href="_shared/checkout-mock.css">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ══════ MOCKUP TOOLBAR — not part of the design ══════ -->
+<div class="mock-bar">
+  <span class="mock-bar__brand">Mockup controls</span>
+
+  <span class="mock-bar__group">
+    <span class="mock-bar__label">Example</span>
+    <button data-ctl="fulfilment" data-val="shipping">Example 1: Shipping/RareStorage/Prearrival</button>
+    <button data-ctl="fulfilment" data-val="delivery">Example 2: Local Delivery</button>
+    <button data-ctl="fulfilment" data-val="pickup">Example 3: Pickup</button>
+    <button data-ctl="fulfilment" data-val="rsonly">Example 4: RS only address</button>
+  </span>
+
+  <span class="mock-bar__spacer"></span>
+  <a class="mock-bar__page" href="cart-summary.html">Cart</a>
+  <a class="mock-bar__page" href="shipping-methods.html">Shipping</a>
+  <a class="mock-bar__page" href="order-review.html" aria-current="page">Review</a>
+  <a class="mock-bar__page" href="receipt.html">Receipt</a>
+</div>
+
+
+<!-- ══════ HEADER PLACEHOLDER — layout.md §"Prototype representation" ══════ -->
+<div class="kl-header" data-design-token="colors.background.header colors.background.nav" aria-hidden="true">
+  <div class="kl-header-mobile">
+    <div class="kl-header-mobile-bar">
+      <div class="kl-header-icon-group">
+        <div class="kl-header-icon-btn"><svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></div>
+        <div class="kl-header-icon-btn"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+      </div>
+      <span class="kl-header-mobile-logo">K&amp;L</span>
+      <div class="kl-header-icon-group kl-header-icon-group--right">
+        <div class="kl-header-icon-btn"><svg viewBox="0 0 24 24"><path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+        <div class="kl-header-icon-btn"><svg viewBox="0 0 24 24"><path d="M15.55 13c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.37-.66-.11-1.48-.87-1.48H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2h7.45zM6.16 6h12.15l-2.76 5H8.53L6.16 6zM7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+      </div>
+    </div>
+    <div class="kl-header-search">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <span class="kl-header-search-text">What can we help you find?</span>
+    </div>
+  </div>
+
+  <div class="kl-header-desktop">
+    <div class="kl-header-topbar">
+      <div class="kl-header-topbar-zone">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        What can we help you find?
+      </div>
+      <span class="kl-header-topbar-logo">K&amp;L Wine Merchants</span>
+      <div class="kl-header-topbar-zone kl-header-topbar-zone--right">
+        Gift Cards · Contact · My Account · Hello, Ute · Cart (<span data-when="fulfilment:shipping|delivery|pickup">11</span><span data-when="fulfilment:rsonly">5</span>)
+      </div>
+    </div>
+    <div class="kl-header-navbar" data-design-token="colors.background.nav typography.fontFamily.lora typography.fontSize.navMain">
+      <span class="kl-header-nav-item">Wines</span>
+      <span class="kl-header-nav-item">Spirits</span>
+      <span class="kl-header-nav-item">Auctions</span>
+      <span class="kl-header-nav-item">Wine Clubs</span>
+      <span class="kl-header-nav-item">Storage</span>
+      <span class="kl-header-nav-item">Delivery</span>
+      <span class="kl-header-nav-item">Events</span>
+    </div>
+  </div>
+</div>
+
+
+<div class="page-container page-body">
+
+  <div class="checkout-layout">
+
+    <!-- ══════════════ PRIMARY COLUMN ══════════════ -->
+    <main class="checkout-main">
+
+      <!-- ═══════════ DELIVERING TO / PICKUP PERSON ═══════════
+           Existing block, not redesigned. Two columns and one pencil, laid out
+           to be checked rather than read.
+
+           ⚠ Example 4 still says "Delivering to" and "Delivery Address" for an
+           address nothing is delivered to. Inherited, and left alone on all
+           three pages rather than reworded here only — the address IS what
+           triggers the RareStorage route, so it is not wrong to show it. See
+           NOTES.md §10. -->
+      <div class="section-heading" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Delivering to</div>
+      <!-- "Pickup Location" matches the shipping page's heading for the same
+           block. The live component says "RareStorage Pickup (Will Call) at",
+           split across two h4s ("Pickup Person" + the store). -->
+      <div class="section-heading" data-when="fulfilment:pickup" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Pickup Location</div>
+
+      <div class="summary-block">
+        <div class="summary-block__cols">
+          <div class="summary-block__lines" data-design-token="typography.variants.body1 colors.text.primary">
+            Ute Stohner<br>
+            Email: ute@example.com<br>
+            Phone: (650) 555-0134
+          </div>
+
+          <div class="summary-block__lines" data-when="fulfilment:shipping" data-design-token="typography.variants.body1 colors.text.primary">
+            <div class="summary-block__label">Delivery Address</div>
+            7728 Regents Rd<br>San Diego CA 92122, USA
+          </div>
+          <div class="summary-block__lines" data-when="fulfilment:delivery" data-design-token="typography.variants.body1 colors.text.primary">
+            <div class="summary-block__label">Delivery Address</div>
+            742 Laurel St<br>Redwood City CA 94063, USA
+          </div>
+          <!-- Street line is a PLACEHOLDER; only the ZIP (80123) comes from the
+               uploaded screenshot. -->
+          <div class="summary-block__lines" data-when="fulfilment:rsonly" data-design-token="typography.variants.body1 colors.text.primary">
+            <div class="summary-block__label">Delivery Address</div>
+            4820 S Wadsworth Blvd<br>Littleton CO 80123, USA
+          </div>
+          <!-- Store street line is a PLACEHOLDER. Store and curbside hours and
+               the store phone are shown on the live page from the location
+               record; omitted here because they are data, not messaging. -->
+          <div class="summary-block__lines" data-when="fulfilment:pickup" data-design-token="typography.variants.body1 colors.text.primary">
+            <div class="summary-block__label">Pickup Location</div>
+            RareStorage Redwood City<br>Redwood City CA 94063, USA
+          </div>
+        </div>
+        <svg class="summary-block__edit" viewBox="0 0 24 24" aria-hidden="true" data-design-token="colors.grey.muted" data-mui-component="IconButton EditOutlined"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      </div>
+
+
+      <!-- ═══════════ PAYMENT INFO — existing block, unchanged ═══════════ -->
+      <div class="section-heading" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Payment Info</div>
+
+      <div class="summary-block">
+        <div class="summary-block__cols">
+          <div class="summary-block__lines" data-design-token="typography.variants.body1 colors.text.primary">
+            Ute Stohner
+            <div class="summary-block__card">
+              <!-- Placeholder for the card artwork the live page renders from an
+                   asset — the mockup does not ship a logo it does not own. -->
+              <span class="card-brand" aria-hidden="true">VISA</span>
+              <span>&bull;&bull;&bull;&bull; 4242</span>
+            </div>
+          </div>
+
+          <div class="summary-block__lines" data-when="fulfilment:shipping" data-design-token="typography.variants.body1 colors.text.primary">
+            <div class="summary-block__label">Billing Address</div>
+            7728 Regents Rd<br>San Diego CA 92122, USA
+          </div>
+          <div class="summary-block__lines" data-when="fulfilment:delivery|pickup" data-design-token="typography.variants.body1 colors.text.primary">
+            <div class="summary-block__label">Billing Address</div>
+            742 Laurel St<br>Redwood City CA 94063, USA
+          </div>
+          <div class="summary-block__lines" data-when="fulfilment:rsonly" data-design-token="typography.variants.body1 colors.text.primary">
+            <div class="summary-block__label">Billing Address</div>
+            4820 S Wadsworth Blvd<br>Littleton CO 80123, USA
+          </div>
+        </div>
+        <svg class="summary-block__edit" viewBox="0 0 24 24" aria-hidden="true" data-design-token="colors.grey.muted" data-mui-component="IconButton EditOutlined"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      </div>
+
+
+      <!-- ═══════════ ORDER SUMMARY ═══════════ -->
+      <div class="section-heading" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Order Summary</div>
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           ORDER-LEVEL SUMMARY — third page, same sentence, same treatment.
+
+           The count is generated from the shipments actually visible, so it
+           reads 3 in Examples 1 and 3 and 2 in Examples 2 and 4, and
+           pluralises. No quantity on this line: the cart carries "Quantity: 11
+           items" because the cart is where quantities are edited.
+
+           Worth a decision: this is the third page to say it. The argument for
+           keeping it is that this is the page where the shopper commits, and
+           the split changes what they will actually receive — a shopper who
+           skimmed two pages should not discover it on the receipt. The
+           argument against is repetition. It is the same statement, not a new
+           one, which is why it keeps the same charcoal truck and hairline.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="order-summary-msg" data-design-token="colors.grey.border spacing.md spacing.xl">
+        <svg class="order-summary-msg__icon" viewBox="0 0 24 24" aria-hidden="true"
+             data-design-token="colors.brand.charcoal"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+        <div class="order-summary-msg__body">
+          <div class="order-summary-msg__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+            Your order arrives in <span data-count>3</span> <span data-count-word>shipments</span>
+            <span class="flag flag--new">New</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ship-groups">
+
+        <!-- ═══════════ SHIPMENT 1 (EXAMPLE 1) — California warehouse ═══════════
+             The one shipment in the four examples that asked the shopper
+             something, so the one that gets a method, a fee and a pencil. -->
+        <section class="ship-group" data-group="ca" data-when="fulfilment:shipping">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>1</span> of <span data-seq-total>3</span>
+              <span class="flag flag--changed">Reworded</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Ships from Northern California
+              </h2>
+            </div>
+          </div>
+
+          <!-- The method the shopper chose, and what it costs. Same row as the
+               shipping page's collapsed state, so the two pages state a chosen
+               method identically — plus a pencil, which the live review page
+               does not offer at shipment level at all. -->
+          <div class="ship-group__chosen ship-group__chosen--review">
+            <span data-design-token="typography.variants.body2 colors.text.primary">FedEx 3-Day &middot; <strong>$36.00</strong></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" data-design-token="colors.grey.muted" data-mui-component="IconButton EditOutlined"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </div>
+
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            Item(s) below leave our warehouse in <strong>1&ndash;2 days</strong>. Transit time
+            depends on your address
+            <span class="flag flag--changed">Reworded</span>
+          </p>
+
+          <div class="ship-group__items">
+            <div class="cart-item" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $21.99</div>
+                <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$43.98</div>
+              </div>
+              <div class="cart-item__qty">
+                <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</span>
+              </div>
+            </div>
+
+            <div class="cart-item" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+              </div>
+              <div class="cart-item__qty">
+                <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+              </div>
+            </div>
+
+            <div class="cart-item" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#8D9440"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  2023 Esk Valley Sauvignon Blanc Marlborough
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $14.99</div>
+                <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$29.98</div>
+              </div>
+              <div class="cart-item__qty">
+                <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══════════ SHIPMENT 1 (EXAMPLE 2) — LOCAL DELIVERY ═══════════
+             Two shipments in this example, not three: New York stock transfers
+             to Redwood City and rides the same delivery, so it is a third
+             SOURCE inside this shipment rather than a RareStorage shipment of
+             its own. Corrected 2026-08-19; the cart and shipping pages carry
+             the same three sub-groups. -->
+        <section class="ship-group" data-group="ld" data-when="fulfilment:delivery">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>1</span> of <span data-seq-total>2</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Local Delivery
+                <span class="flag flag--new">New</span>
+              </h2>
+            </div>
+          </div>
+
+          <div class="ship-group__chosen ship-group__chosen--review">
+            <span data-design-token="typography.variants.body2 colors.text.primary">Local Delivery &middot; <strong>$9.00</strong></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" data-design-token="colors.grey.muted" data-mui-component="IconButton EditOutlined"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </div>
+
+          <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
+            Items below will be transferred to RareStorage Redwood City for Local Delivery
+            to your address.
+          </p>
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            You can select delivery options on the receipt page
+          </p>
+
+          <!-- Sub-section A — another CA store -->
+          <div class="ship-sub">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Transferring from RareStorage San Francisco. Available for local delivery in
+              <strong>2 days</strong>
+            </div>
+            <div class="ship-group__items">
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $21.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$43.98</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</span>
+                </div>
+              </div>
+
+              <!-- One of the shopper's two bottles of this wine; the other is in
+                   sub-section C, coming from New York. The wording for a split SKU
+                   ("1 of your 2 bottles") is still deferred — NOTES.md §4, D5. -->
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sub-section B — already at the delivering store -->
+          <div class="ship-sub">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Item(s) below are in RareStorage Redwood City. Available for local delivery in
+              <strong>1&ndash;2 days</strong>
+            </div>
+            <div class="ship-group__items">
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#8D9440"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2023 Esk Valley Sauvignon Blanc Marlborough
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $14.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$29.98</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sub-section C — NEW YORK stock. No storage terms: nothing enters a
+               storage account, the bottles are only consolidated for the
+               delivery run, so there is no 60-day clock and no separate
+               RareStorage shipping charge to disclose. -->
+          <div class="ship-sub">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Transferring from RareStorage New York. Available for local delivery in
+              <strong>5 days</strong>
+              <span class="flag flag--new">New</span>
+            </div>
+            <div class="ship-group__items">
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $6.49</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$19.47</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 3</span>
+                </div>
+              </div>
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══════════ SHIPMENT 1 (EXAMPLE 3) — PICKUP ═══════════
+             Nothing was chosen and nothing is charged, so there is no method
+             row and no fee — the shipment states what happens and lists the
+             bottles it applies to. Three sources, one shipment; two shipments on
+             the page in total. -->
+        <section class="ship-group" data-group="pu" data-when="fulfilment:pickup">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>1</span> of <span data-seq-total>3</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Pickup from RareStorage Redwood City
+                <span class="flag flag--new">New</span>
+              </h2>
+            </div>
+          </div>
+
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            Items below will be transferred to RareStorage Redwood City for Pickup
+          </p>
+
+          <div class="ship-sub">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Item(s) below are transferring from RareStorage San Francisco. Available for
+              pickup in <strong>2 days</strong>
+            </div>
+            <div class="ship-group__items">
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $21.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$43.98</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</span>
+                </div>
+              </div>
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ship-sub">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Item(s) below are in RareStorage Redwood City. Available for pickup in
+              <strong>1&ndash;2 days</strong>
+            </div>
+            <div class="ship-group__items">
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#8D9440"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2023 Esk Valley Sauvignon Blanc Marlborough
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $14.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$29.98</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sub-section C — NEW YORK stock (corrected 2026-08-19, as Example 2).
+               It transfers to Redwood City with everything else and is collected
+               there, so it is a third source inside this shipment rather than a
+               RareStorage shipment of its own. Example 3 is therefore two
+               shipments, and still asks the shopper nothing. -->
+          <div class="ship-sub">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Transferring from RareStorage New York. Available for pickup in
+              <strong>5 days</strong>
+              <span class="flag flag--new">New</span>
+            </div>
+            <div class="ship-group__items">
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $6.49</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$19.47</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 3</span>
+                </div>
+              </div>
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ═══════════ SHIPMENT 2 — New York → RareStorage ═══════════
+             Example 1 only. Examples 2 and 3 send their New York bottles along
+             with the local delivery / pickup consolidation (see above), and
+             Example 4 has its own version split by origin warehouse.
+
+             No fee quoted, no pencil: nothing here was chosen, so there is
+             nothing to change and no price to confirm. The storage sentence
+             leads and the items-pointing sentence closes, per NOTES.md §11. -->
+        <section class="ship-group" data-group="rs" data-when="fulfilment:shipping">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>2</span> of <span data-seq-total>3</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Transfer to RareStorage
+                <span class="flag flag--new">New</span>
+              </h2>
+            </div>
+          </div>
+
+          <!-- One wording only. The shipping page carries a pickup variant of this
+               sentence ("Items can be picked up at RareStorage Redwood City once
+               available"), which is unreachable after the 2026-08-19 correction —
+               a pickup order has no RareStorage shipment. Not reproduced here. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage. Shipping will be charged separately by RareStorage.
+          </p>
+
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            Items below will transfer to RareStorage, leaving the New York warehouse in
+            <strong>1&ndash;2 days</strong>.
+            <span class="flag flag--changed">Reworded</span>
+          </p>
+
+          <div class="ship-group__items">
+            <div class="cart-item" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $6.49</div>
+                <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$19.47</div>
+              </div>
+              <div class="cart-item__qty">
+                <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 3</span>
+              </div>
+            </div>
+
+            <div class="cart-item" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+              </div>
+              <div class="cart-item__qty">
+                <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- >>> DELIVERABLE — THE TERMS HANG OFF THE TRANSFER, NOT A CHOICE <<<
+               The cart's collapsed version, verbatim, rather than the beige
+               RareStorageTransferNotice the live review page renders: that is a
+               third wording of the same terms, and its fill is not in
+               colors.md. One line closed, one click open.
+
+               On the shipping page the full explainer is attached to the
+               RareStorage OPTION, which means a shopper who picks FedEx sees no
+               terms at all even though four bottles still transfer (NOTES.md
+               §14). On this page it is attached to the shipment that transfers,
+               so it is there whatever was chosen earlier. -->
+          <details class="disclose">
+            <summary data-design-token="typography.variants.caption colors.text.primary">What RareStorage means</summary>
+            <div class="disclose__body">
+              <ul class="callout__list" data-design-token="typography.variants.caption colors.text.primary">
+                <li>Secure, temperature-controlled storage, run by RareStorage.</li>
+                <li>You&rsquo;ll get Vault access by email after checkout.</li>
+                <li>Keep them stored or ship them on, whenever you like.</li>
+                <li>Free for 60 days, then $0.40 per bottle/month ($9.50 min). <span class="t-link">RareStorage.com</span></li>
+              </ul>
+            </div>
+          </details>
+        </section>
+
+
+        <!-- ═══════════ SHIPMENT 1 (EXAMPLE 4) — RS-ONLY ADDRESS ═══════════
+             The whole in-stock order transfers, split by ORIGIN warehouse:
+             destination is the same for everything, and only the release dates
+             differ — so the shipment-level sentence carries no origin and no
+             timing. Ordered soonest-first. -->
+        <section class="ship-group" data-group="rs4" data-when="fulfilment:rsonly">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>1</span> of <span data-seq-total>2</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                Transfer to RareStorage
+                <span class="flag flag--new">New</span>
+              </h2>
+            </div>
+          </div>
+
+          <!-- It matters most here: the ENTIRE order goes into storage, so every
+               future shipping charge comes from RareStorage and there is no
+               other shipment arriving to anchor the cost against. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage. Shipping will be charged separately by RareStorage.
+          </p>
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            Items below will transfer to RareStorage
+          </p>
+
+          <!-- Sub-section A — New York stock, ready soonest -->
+          <div class="ship-sub">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Item(s) below will transfer to RareStorage, leaving the New York warehouse in
+              <strong>1&ndash;2 days</strong>.
+            </div>
+            <div class="ship-group__items">
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $6.49</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$6.49</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+                </div>
+              </div>
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sub-section B — Northern California stock -->
+          <div class="ship-sub">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Item(s) below will transfer to RareStorage, leaving the Northern California
+              warehouse in <strong>3&ndash;4 days</strong>.
+            </div>
+            <div class="ship-group__items">
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $21.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$21.99</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+                </div>
+              </div>
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#722F37"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2021 Marqu&eacute;s de Murrieta Reserva Rioja
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $27.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$27.99</div>
+                </div>
+                <div class="cart-item__qty">
+                  <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <details class="disclose">
+            <summary data-design-token="typography.variants.caption colors.text.primary">What RareStorage means</summary>
+            <div class="disclose__body">
+              <ul class="callout__list" data-design-token="typography.variants.caption colors.text.primary">
+                <li>Secure, temperature-controlled storage, run by RareStorage.</li>
+                <li>You&rsquo;ll get Vault access by email after checkout.</li>
+                <li>Keep them stored or ship them on, whenever you like.</li>
+                <li>Free for 60 days, then $0.40 per bottle/month ($9.50 min). <span class="t-link">RareStorage.com</span></li>
+              </ul>
+            </div>
+          </details>
+        </section>
+
+
+        <!-- ═══════════ LAST SHIPMENT — Pre-arrival ═══════════
+             All four examples. No carrier, no fee, no date beyond the expected
+             month — the charging note leads and the items-pointing sentence
+             closes, per NOTES.md §11. "shipping or pickup" because a pickup
+             shopper collects these bottles rather than having them shipped. -->
+        <section class="ship-group ship-group--deferred" data-group="pa">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>3</span> of <span data-seq-total>3</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                <svg class="ship-group__icon" viewBox="0 0 24 24" aria-hidden="true"
+                     data-design-token="colors.brand.burgundy"
+                     data-mui-component="AccessTimeIcon color=secondary">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                  <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                Pre-arrival &mdash; expected by October 31, 2026
+              </h2>
+            </div>
+          </div>
+
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            No shipping charges until the items are ready to ship
+          </p>
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            We&rsquo;ll contact you to arrange shipping or pickup for the item(s) below
+            <span class="flag flag--new">New</span>
+          </p>
+
+          <div class="ship-group__items">
+            <!-- Example 4 holds ONE pre-arrival bottle, not two — its figures come
+                 from that example's own screenshot ($124.45 / 5 items). -->
+            <div class="cart-item" data-unless="fulfilment:rsonly" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  2013 Chateau de Pommard Pommard (Pre-Arrival)
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $49.99</div>
+                <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$99.98</div>
+              </div>
+              <div class="cart-item__qty">
+                <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</span>
+              </div>
+            </div>
+
+            <div class="cart-item" data-when="fulfilment:rsonly" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  2013 Chateau de Pommard Pommard (Pre-Arrival)
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $49.99</div>
+                <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$49.99</div>
+              </div>
+              <div class="cart-item__qty">
+                <span class="cart-item__qtystatic" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /.ship-groups -->
+
+      <hr class="divider">
+
+      <!-- ═══════════ GIFT ORDER — existing block, not redesigned ═══════════
+           Parked question, not a change: a gift order that arrives in three
+           shipments raises "which shipment carries the message?", and the page
+           does not say. Out of scope for shipment messaging. -->
+      <div class="section-heading" data-design-token="typography.variants.h4 colors.text.primary" data-mui-component="Typography variant=h5">Gift Order</div>
+      <label class="checkbox" style="margin-bottom: var(--spacing-lg);">
+        <span class="checkbox__box" data-design-token="colors.grey.border components.card.borderRadius" data-mui-component="Checkbox"></span>
+        <span class="checkbox__label" data-design-token="typography.variants.body2 colors.text.primary">
+          This is a gift order
+        </span>
+      </label>
+
+      <!-- ═══════════ ADDITIONAL COMMENTS — existing block ═══════════ -->
+      <div class="field" style="max-width: 640px;">
+        <label class="field__label" for="comments" data-design-token="typography.variants.subtitle2 colors.text.secondary">Additional Comments</label>
+        <textarea class="field__input" id="comments" placeholder="Anything we should know about this order?" data-design-token="components.input.borderRadius colors.grey.border" data-mui-component="TextField multiline"></textarea>
+      </div>
+
+    </main>
+
+
+    <!-- ══════════════ SECONDARY RAIL ══════════════ -->
+    <aside class="checkout-rail">
+      <div class="rail-card" data-design-token="colors.grey.border components.card.borderRadius components.card.padding" data-mui-component="Card variant=outlined">
+
+        <div class="rail-row">
+          <span data-design-token="typography.variants.body1 colors.text.secondary">Subtotal</span>
+          <span class="rail-row__value" data-design-token="typography.variants.body1 colors.text.primary">
+            <span data-when="fulfilment:shipping|delivery|pickup">$229.39</span><span data-when="fulfilment:rsonly">$124.45</span>
+          </span>
+        </div>
+
+        <!-- >>> DELIVERABLE — THE FEE ROW IS NAMED FOR WHAT IT IS <<<
+             Live labels this row "Delivery Fee" whatever the method was.
+             "Delivery" means Local Delivery only, so shipping says Shipping;
+             and pickup and the RS-only address get no row at all, because
+             neither is charged anything at checkout. -->
+        <div class="rail-row" data-when="fulfilment:shipping">
+          <span data-design-token="typography.variants.body1 colors.text.secondary">
+            Shipping
+            <span class="flag flag--changed">Reworded</span>
+          </span>
+          <span class="rail-row__value" data-design-token="typography.variants.body1 colors.text.primary">$36.00</span>
+        </div>
+        <div class="rail-row" data-when="fulfilment:delivery">
+          <span data-design-token="typography.variants.body1 colors.text.secondary">Delivery fee</span>
+          <span class="rail-row__value" data-design-token="typography.variants.body1 colors.text.primary">$9.00</span>
+        </div>
+
+        <!-- Tax figures are ILLUSTRATIVE — plausible rates for each ZIP, not
+             quoted from the tax engine. Example 4 also raises a real question
+             nobody has answered: an order that transfers to RareStorage is
+             taxed where, at the shopper's address or where title passes? See
+             NOTES.md. -->
+        <div class="rail-row">
+          <span data-design-token="typography.variants.body1 colors.text.secondary">Tax</span>
+          <span class="rail-row__value" data-design-token="typography.variants.body1 colors.text.primary">
+            <span data-when="fulfilment:shipping">$17.78</span><span data-when="fulfilment:delivery|pickup">$22.65</span><span data-when="fulfilment:rsonly">$10.96</span>
+          </span>
+        </div>
+
+        <div class="rail-row rail-row--total">
+          <span data-design-token="typography.variants.h4 typography.fontWeight.regular colors.text.primary">Total</span>
+          <span class="rail-row__value rail-row__value--price" data-design-token="typography.variants.price1 colors.text.primary">
+            <span data-when="fulfilment:shipping">$283.17</span><span data-when="fulfilment:delivery">$261.04</span><span data-when="fulfilment:pickup">$252.04</span><span data-when="fulfilment:rsonly">$135.41</span>
+          </span>
+        </div>
+
+        <!-- Replaces the live page's label-less "Excludes RareStorage shipping
+             rates" row — a double negative in a totals column, where every
+             other line is a name and an amount. Same sentence the cart's rail
+             uses, so both pages say it once and identically.
+
+             Hidden for pickup: those bottles are collected from the store, so
+             there is no onward RareStorage shipping charge to warn about. -->
+        <p class="t-caption" style="margin-top: var(--spacing-sm);" data-when="fulfilment:shipping|rsonly" data-design-token="typography.variants.caption colors.text.secondary">
+          Shipping from RareStorage is charged separately.
+          <span class="flag flag--changed">Reworded</span>
+        </p>
+
+        <!-- ═══════════ CONSENT — existing block, unchanged ═══════════
+             Inside the card and above the CTA it gates. Tariffs appear in all
+             four examples because all four hold a pre-arrival item, which is
+             what requires the check — the page never says so, and the checkbox
+             never says which bottles it is about. Noted, not redesigned. -->
+        <div class="rail-consent">
+          <label class="checkbox">
+            <span class="checkbox__box" data-design-token="colors.grey.border components.card.borderRadius" data-mui-component="Checkbox"></span>
+            <span class="checkbox__label" data-design-token="typography.variants.caption colors.text.primary">
+              I am <span class="t-link">21+ years of age</span>
+            </span>
+          </label>
+          <label class="checkbox">
+            <span class="checkbox__box" data-design-token="colors.grey.border components.card.borderRadius" data-mui-component="Checkbox"></span>
+            <span class="checkbox__label" data-design-token="typography.variants.caption colors.text.primary">
+              I agree to the <span class="t-link">Terms of Sale</span>
+            </span>
+          </label>
+          <label class="checkbox">
+            <span class="checkbox__box" data-design-token="colors.grey.border components.card.borderRadius" data-mui-component="Checkbox"></span>
+            <span class="checkbox__label" data-design-token="typography.variants.caption colors.text.primary">
+              I agree to any <span class="t-link">tariffs that may apply</span>
+            </span>
+          </label>
+        </div>
+
+        <button class="btn btn--primary btn--block" data-design-token="colors.cta.primary colors.text.onDark typography.fontSize.subsection typography.fontWeight.bold" data-mui-component="Button variant=contained color=secondary">
+          Complete Purchase
+        </button>
+      </div>
+    </aside>
+
+  </div><!-- /.checkout-layout -->
+</div><!-- /.page-container -->
+
+
+<footer class="kl-footer" aria-hidden="true">
+  <div class="page-container kl-footer__inner">
+    <span class="kl-footer__logo">K&amp;L Wine Merchants</span>
+    <div class="kl-footer__links">
+      <span>About Us</span><span>Careers</span><span>Blog</span><span>Shipping</span><span>Contact</span>
+    </div>
+  </div>
+</footer>
+
+<script src="_shared/checkout-mock.js"></script>
+<script>
+  /* Nothing on this page is interactive by design — it is the confirmation
+     page, and the only decision it holds is the CTA. So there is no state
+     machine here, only the Example switch: `fulfilment` picks which shipments
+     and which figures are shown, and checkout-mock.js does the numbering.
+
+     `composition` and `zip` are not used on this page. The basket is settled by
+     the time the shopper reaches review, and a ZIP is a precondition for
+     getting here at all. */
+  KLMock.init({ fulfilment: "shipping" });
+  KLMock.render();
+</script>
+</body>
+</html>

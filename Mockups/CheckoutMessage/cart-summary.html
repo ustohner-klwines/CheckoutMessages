@@ -92,7 +92,7 @@
   <span class="mock-bar__group">
     <span class="mock-bar__label">Example</span>
     <button data-ctl="fulfilment" data-val="shipping">Example 1: Shipping/RareStorage/Prearrival</button>
-    <button data-ctl="fulfilment" data-val="delivery">Example 2: Local Delivery/RareStorage/Prearrival</button>
+    <button data-ctl="fulfilment" data-val="delivery">Example 2: Local Delivery/Prearrival</button>
     <button data-ctl="fulfilment" data-val="pickup">Example 3: Pickup/Prearrival</button>
     <button data-ctl="fulfilment" data-val="rsonly">Example 4: RS only address</button>
   </span>
@@ -229,8 +229,9 @@
       <!-- Mockup chrome, not design: guards toolbar combinations with no groups. -->
       <div class="mock-empty is-hidden" data-block="empty">
         <strong>No shipments in this combination.</strong>
-        Every example now has a RareStorage shipment, so this only fires on Cart options that
-        empty every group. Pick a different Cart option.
+        This only fires on Cart options that empty every group. Pick a different Cart option.
+        (Examples 2 and 3 have no RareStorage shipment: their New York bottles ride the
+        local delivery / pickup consolidation instead — see Sub-section C in each.)
       </div>
 
       <div class="ship-groups">
@@ -240,9 +241,9 @@
              >>> DELIVERABLE <<<
 
              Local delivery only runs within range of a store; here the shopper
-             is in range of Redwood City. Stock held at other CA stores is
-             transferred there first, so the shopper gets ONE local delivery
-             shipment, not one per source store.
+             is in range of Redwood City. Stock held anywhere else — other CA
+             stores AND the New York warehouse — is transferred there first, so the
+             shopper gets ONE local delivery shipment, not one per source store.
 
              Hence: one group, with a sub-section per source location because
              each source has its own timing. The sub-headers are deliberately
@@ -362,6 +363,82 @@
 
             </div>
           </div>
+
+          <!-- Sub-section C — NEW YORK stock, and the reason Example 2 has only TWO
+               shipments now.
+
+               Corrected understanding (2026-08-19): New York stock bound for a
+               local-delivery address does NOT become a separate RareStorage shipment.
+               It transfers to RareStorage Redwood City like the rest of the order and
+               goes out on the same local delivery — it just takes longer to get there.
+
+               So it is a third SOURCE inside shipment 1, not a shipment of its own.
+               Consequence: Example 2 has no "Transfer to RareStorage" group at all, and
+               the whole page reads "2 shipments" — local delivery, then pre-arrival.
+
+               No storage terms here, and that is not an omission: nothing enters a
+               storage account. The bottles are consolidated at a RareStorage facility
+               for the delivery run, so there is no 60-day clock and no separate
+               RareStorage shipping charge to disclose. Storage only becomes a thing on
+               the shipping page, where the shopper can DIVERT this shipment into it. -->
+          <div class="ship-sub" data-when="composition:full|canv">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Transferring from RareStorage New York. Available for local delivery in
+              <strong>5 days</strong>
+              <span class="flag flag--new">New</span>
+            </div>
+            <div class="ship-group__items">
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $6.49</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$19.47</div>
+                  <div class="cart-item__actions">
+                    <span class="cart-item__action">Remove</span>
+                    <span class="cart-item__action">Saved to Favorites</span>
+                  </div>
+                </div>
+                <div class="cart-item__qty">
+                  <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                    <button type="button" aria-label="Decrease quantity">&minus;</button>
+                    <span class="qty-stepper__value">3</span>
+                    <button type="button" aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+                  <div class="cart-item__actions">
+                    <span class="cart-item__action">Remove</span>
+                    <span class="cart-item__action">Saved to Favorites</span>
+                  </div>
+                </div>
+                <div class="cart-item__qty">
+                  <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                    <button type="button" aria-label="Decrease quantity">&minus;</button>
+                    <span class="qty-stepper__value">1</span>
+                    <button type="button" aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </section>
 
 
@@ -369,9 +446,10 @@
              GROUP 1 (EXAMPLE 3) — PICKUP, CONSOLIDATED
              >>> DELIVERABLE <<<
 
-             Same consolidation model as local delivery: stock from other CA
-             stores is transferred to the collection store, so it is ONE pickup
-             shipment with a sub-section per source.
+             Same consolidation model as local delivery: stock held anywhere else
+             — other CA stores AND the New York warehouse — is transferred to the
+             collection store, so it is ONE pickup shipment with a sub-section per
+             source, and there is no separate RareStorage shipment.
              ═══════════════════════════════════════════════════════════════ -->
         <section class="ship-group" data-group="pu"
                  data-when="fulfilment:pickup; composition:full|ca|canv">
@@ -478,6 +556,78 @@
                   <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
                     <button type="button" aria-label="Decrease quantity">&minus;</button>
                     <span class="qty-stepper__value">2</span>
+                    <button type="button" aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Sub-section C — NEW YORK stock, same correction as Example 2
+               (2026-08-19). New York stock bound for a pickup order does NOT
+               become a separate RareStorage shipment: it transfers to RareStorage
+               Redwood City like everything else and is collected there, it just
+               takes longer to arrive. A third SOURCE, not a third shipment.
+
+               Consequence: Example 3 has no "Transfer to RareStorage" group
+               either, so the page reads "2 shipments" — pickup, then pre-arrival.
+               Both remain FIXED: nothing on the page asks the shopper anything.
+
+               No storage terms: nothing enters a storage account. The bottles are
+               staged at a RareStorage store for collection, so there is no 60-day
+               clock (and Q7 confirmed the pickup limit is not enforced anyway). -->
+          <div class="ship-sub" data-when="composition:full|canv">
+            <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
+              Transferring from RareStorage New York. Available for pickup in
+              <strong>5 days</strong>
+              <span class="flag flag--new">New</span>
+            </div>
+            <div class="ship-group__items">
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $6.49</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$19.47</div>
+                  <div class="cart-item__actions">
+                    <span class="cart-item__action">Remove</span>
+                    <span class="cart-item__action">Saved to Favorites</span>
+                  </div>
+                </div>
+                <div class="cart-item__qty">
+                  <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                    <button type="button" aria-label="Decrease quantity">&minus;</button>
+                    <span class="qty-stepper__value">3</span>
+                    <button type="button" aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cart-item" data-design-token="spacing.md spacing.lg">
+                <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="cart-item__body">
+                  <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                    2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+                  </div>
+                  <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+                  <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$17.99</div>
+                  <div class="cart-item__actions">
+                    <span class="cart-item__action">Remove</span>
+                    <span class="cart-item__action">Saved to Favorites</span>
+                  </div>
+                </div>
+                <div class="cart-item__qty">
+                  <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                    <button type="button" aria-label="Decrease quantity">&minus;</button>
+                    <span class="qty-stepper__value">1</span>
                     <button type="button" aria-label="Increase quantity">+</button>
                   </div>
                 </div>
@@ -613,7 +763,7 @@
              pickup shopper collects it from there. Example 4 has its own split-origin
              version of this shipment. See NOTES.md §12. -->
         <section class="ship-group" data-group="rs"
-                 data-when="fulfilment:shipping|delivery|pickup; composition:full|canv|allrs">
+                 data-when="fulfilment:shipping; composition:full|canv|allrs">
 
           <div class="ship-group__head">
             <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.secondary">

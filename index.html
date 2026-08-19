@@ -137,6 +137,25 @@
         <a class="chip" href="Mockups/CheckoutMessage/shipping-methods.html?fulfilment=rsonly">4 &middot; RS-only address</a>
       </div>
     </li>
+    <li>
+      <a class="card" href="Mockups/CheckoutMessage/order-review.html">
+        <span class="card__eyebrow">Order Review &middot; /checkout/review</span>
+        <h3 class="card__title">Order Review</h3>
+        <p class="card__desc">
+          The last page before payment. The shipments keep the names and numbers they had on
+          the cart and the shipping page &mdash; today this page calls them
+          &ldquo;orders&rdquo; &mdash; and a fee is quoted only where one exists, with a way
+          back to the method it came from.
+        </p>
+      </a>
+      <div class="examples">
+        <a class="chip" href="Mockups/CheckoutMessage/order-review.html?fulfilment=shipping">1 &middot; Shipping</a>
+        <a class="chip" href="Mockups/CheckoutMessage/order-review.html?fulfilment=delivery">2 &middot; Local Delivery</a>
+        <a class="chip" href="Mockups/CheckoutMessage/order-review.html?fulfilment=pickup">3 &middot; Pickup</a>
+        <a class="chip" href="Mockups/CheckoutMessage/order-review.html?fulfilment=rsonly">4 &middot; RS-only address</a>
+      </div>
+    </li>
+
   </ul>
 
   <h2>Reading these</h2>
@@ -144,11 +163,18 @@
     <strong>Every scenario is linkable.</strong> The toolbar writes to the query string, so any
     state can be sent to someone directly &mdash; the chips above are just examples.
     <br><br>
-    <strong>Order review and receipt are not built yet.</strong> Their toolbar links are present
-    and will 404.
+    <strong>The receipt is not built yet.</strong> Its toolbar link is present and will 404.
     <br><br>
-    <strong>The no-ZIP-code state is not in this round.</strong> Both pages assume a ZIP code is
+    <strong>The no-ZIP-code state is not in this round.</strong> Every page assumes a ZIP code is
     known. What the cart shows before one is entered needs more work and comes next.
+    <br><br>
+    <strong>Examples 2 and 3 are two shipments, not three.</strong> New York stock going to a
+    local-delivery or pickup order is transferred to the delivering store with everything else
+    and goes out on the same delivery or is collected at the same counter &mdash; so it is
+    another source inside one shipment, not a shipment of its own.
+    <br><br>
+    <strong>Order review shows illustrative tax figures.</strong> Plausible rates per ZIP, not
+    quoted from the tax engine, and the New York transfer timing (5 days) is a placeholder.
     <br><br>
     <strong>Some copy is still placeholder.</strong> The pickup example's right-hand
     &ldquo;Pickup Information&rdquo; panel, and the store's street address, are stand-ins pending

@@ -227,8 +227,11 @@
              SHIPMENT 1 (EXAMPLE 2) — LOCAL DELIVERY
              >>> DELIVERABLE <<<
 
-             The shopper is in range of Redwood City, so CA stock is consolidated
-             there and delivered locally — one shipment, matching the cart.
+             The shopper is in range of Redwood City, so the whole in-stock order is
+             consolidated there and delivered locally — one shipment, matching the cart.
+             That includes the NEW YORK bottles: they transfer to Redwood City too and
+             ride the same delivery, which is why Example 2 has no separate
+             "Transfer to RareStorage" shipment and the page reads "2 shipments".
 
              RareStorage is still offered as the alternative: local delivery is
              the default given the address, but the shopper can divert the whole
@@ -264,9 +267,9 @@
           </p>
 
           <!-- >>> DELIVERABLE — SUB-GROUPS <<<
-               The shipment consolidates stock from two stores, and they are ready on
+               The shipment consolidates stock from three sources, ready on three
                different days. The cart already splits them; this page did not, so the
-               two timings had to share one sentence and neither was attached to the
+               timings had to share one sentence and none was attached to the
                bottles it applied to.
 
                The two shipment sentences above are unchanged — they describe the whole
@@ -307,6 +310,47 @@
                 <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2023 Esk Valley Sauvignon Blanc Marlborough</div>
                 <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
                 <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$29.98</div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Sub-group C — NEW YORK stock, and the reason Example 2 is now TWO
+               shipments rather than three.
+
+               Corrected understanding (2026-08-19): New York stock bound for a
+               local-delivery address does not become its own RareStorage shipment. It
+               transfers to RareStorage Redwood City like everything else and goes out on
+               the same delivery — it just takes longer to arrive, which is exactly what a
+               sub-group is for. So Example 2 has no "Transfer to RareStorage" group, and
+               the count line reads "2 shipments".
+
+               No storage terms on this shipment: nothing enters a storage account. The
+               bottles are consolidated at a RareStorage facility for the delivery run, so
+               there is no 60-day clock and no separate RareStorage shipping charge. The
+               storage explainer on this page belongs to the OTHER option below — the one
+               where the shopper deliberately diverts the order into storage — and it is
+               still shown only when that option is taken. -->
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below are transferring from RareStorage New York. Available for local delivery in <strong>5 days</strong></span>
+              <span class="flag flag--new">New</span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 3</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$19.47</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$17.99</div>
               </div>
             </div>
           </details>
@@ -369,12 +413,17 @@
              — and pre-arrival is deferred as always. Both shipments are FIXED, so
              the page is entirely informational and Continue is live on arrival.
 
+             TWO shipments, not three (corrected 2026-08-19): the New York bottles
+             consolidate at Redwood City with everything else and are collected
+             there, so there is no separate RareStorage transfer shipment.
+
              That makes Example 3 the proof that the CHOOSE/FIXED split in §6 of
              NOTES.md holds: strip out every decision and the page still reads,
              because the shipment identity was never carried by the radios.
 
-             Two stores are involved, exactly as in the cart: stock consolidates at
-             Redwood City, some of it transferring in from San Francisco.
+             Three sources are involved, exactly as in the cart: stock consolidates
+             at Redwood City, some transferring in from San Francisco and some from
+             the New York warehouse.
              ═══════════════════════════════════════════════════════════════ -->
         <section class="ship-group" data-group="pu" data-ship="0" data-when="fulfilment:pickup">
 
@@ -435,6 +484,40 @@
                 <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2023 Esk Valley Sauvignon Blanc Marlborough</div>
                 <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 2</div>
                 <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$29.98</div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Sub-group C — NEW YORK stock, same correction as Example 2
+               (2026-08-19). New York stock on a pickup order does not become its
+               own RareStorage shipment: it transfers to Redwood City like
+               everything else and is collected there, it just takes longer to
+               arrive. So Example 3 has no "Transfer to RareStorage" group and the
+               page reads "2 shipments" — both still FIXED, so Continue is live on
+               arrival, which is what this example exists to demonstrate.
+
+               No storage terms: nothing enters a storage account. -->
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Item(s) below are transferring from RareStorage New York. Available for pickup in <strong>5 days</strong></span>
+              <span class="flag flag--new">New</span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 3</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$19.47</div>
+              </div>
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$17.99</div>
               </div>
             </div>
           </details>
@@ -546,7 +629,7 @@
              to go to RareStorage first, and the shopper collects it from there. Only the
              storage sentence changes — the destination is a store they can walk into
              rather than a shipping charge they will be billed for later. See §12. -->
-        <section class="ship-group" data-group="rs" data-ship="1" data-when="fulfilment:shipping|delivery|pickup">
+        <section class="ship-group" data-group="rs" data-ship="1" data-when="fulfilment:shipping">
 
           <div class="ship-group__head">
             <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
@@ -573,6 +656,11 @@
             60 day complimentary storage. Shipping will be charged separately by RareStorage.
             <span class="flag flag--new">New</span>
           </p>
+          <!-- SUPERSEDED 2026-08-19 and now unreachable: Example 3 has no RareStorage
+               shipment at all, because its New York bottles ride the pickup
+               consolidation. Kept rather than deleted while the correction settles —
+               if it holds, this variant and the pickup explainer panel below both go.
+               Nothing renders it: the group is fulfilment:shipping only. -->
           <p class="ship-group__msg" data-when="fulfilment:pickup" data-design-token="typography.variants.body2 colors.text.primary">
             60 day complimentary storage. Items can be picked up at RareStorage Redwood City
             once available.
@@ -590,7 +678,7 @@
                 <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
                   <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
                 </div>
-                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (1.8 L)</div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)</div>
                 <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 3</div>
                 <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$19.47</div>
               </div>
@@ -631,11 +719,14 @@
                is not in colors.md — this uses background.subtle (#FAF8F8) with the
                standard card border, the only surface-variation token there is.
 
-               EXAMPLE 3 ONLY, and always open rather than opt-in: pickup offers no
-               RareStorage choice on shipment 1, so there is no selection to hang it
-               off and nowhere else on the page it could appear. In Examples 1 and 2
-               this shipment has no panel — theirs sits on shipment 1, where choosing
-               RareStorage IS a decision, and one explainer per page is the rule. -->
+               SUPERSEDED 2026-08-19, and now unreachable: this panel existed because
+               Example 3 had a RareStorage shipment with no selection to hang an
+               explainer off. Example 3 has no RareStorage shipment any more — its New
+               York bottles ride the pickup consolidation — so nothing enters a storage
+               account in that example and there are no storage terms to state. Kept
+               with the superseded sentence above while the correction settles; both go
+               together if it holds. Examples 1 and 2 keep their opt-in panel on
+               shipment 1, where choosing RareStorage IS a decision. -->
           <div class="callout rs-panel" data-rs-panel="fixed" data-when="fulfilment:pickup" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding">
             <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
               Transfer to RareStorage

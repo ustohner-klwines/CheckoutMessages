@@ -830,6 +830,88 @@ select.field__input { height: var(--input-height); cursor: pointer; }
 
 
 /* ══════════════════════════════════════════════════════════════════════════
+   ORDER REVIEW — CONFIRMATION BLOCKS
+   "Delivering to" and "Payment Info": what the shopper already told us, laid
+   out to be checked at a glance rather than read. Two columns, one pencil per
+   block, no card — same no-container reasoning as the shipment groups.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.summary-block {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--spacing-md); margin-bottom: var(--spacing-xl);
+}
+.summary-block__cols {
+  flex: 1; min-width: 0;
+  display: grid; grid-template-columns: 1fr; gap: var(--spacing-md);
+}
+@media (min-width: 700px) {
+  .summary-block__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-xl); }
+}
+/* 1.35 rather than the body1 default: these are stacked label/value lines, not
+   prose, and the looser leading made an address read as four separate facts. */
+.summary-block__lines { font-size: var(--font-size-body1); line-height: 1.35; }
+.summary-block__label {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+.summary-block__edit {
+  width: 20px; height: 20px; fill: var(--color-grey-muted);
+  flex-shrink: 0; cursor: pointer;
+}
+.summary-block__card { display: flex; align-items: center; gap: var(--spacing-sm); margin: 2px 0 var(--spacing-sm); }
+
+/* Card-brand mark — a placeholder for the real card artwork the live page
+   renders from an asset, so the mockup does not ship a logo it does not own. */
+.card-brand {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 26px; flex-shrink: 0;
+  border: var(--card-border); border-radius: 3px;
+  background: var(--color-bg-subtle);
+  font-size: 10px; font-weight: var(--font-weight-bold);
+  letter-spacing: .06em; color: var(--color-text-secondary);
+}
+
+/* Review reuses the shipping page's chosen-method row, so the line that states
+   "this is the method you picked, and what it costs" looks identical on both
+   pages. Only the spacing differs: on review it sits directly under the heading
+   with a message after it, rather than closing the group. */
+.ship-group__chosen--review { margin-top: 0; margin-bottom: var(--spacing-md); }
+
+/* Static quantity on a read-only item row. The review page lists the same rows
+   as the cart, minus every control: no stepper, no Remove, no Favorites. The
+   amounts stay, because this is the page where the shopper checks what they are
+   paying for — that is the difference from the shipping page's preview rows,
+   which drop the amounts too. */
+.cart-item__qtystatic {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-secondary); white-space: nowrap;
+}
+
+/* Total value — price1, regular weight, matching the live page. */
+.rail-row--total .rail-row__value--price {
+  font-size: var(--font-size-price1); line-height: var(--line-height-price1);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Consent checkboxes live inside the totals card, above the CTA they gate. */
+.rail-consent {
+  border-top: 0.5px solid var(--color-grey-border);
+  margin-top: var(--spacing-md); padding-top: var(--spacing-md);
+  display: flex; flex-direction: column; gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+.rail-consent .checkbox__label {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+}
+
+textarea.field__input {
+  height: auto; min-height: 84px; resize: vertical;
+  line-height: var(--line-height-body2);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
    DIVIDERS / MISC
    ══════════════════════════════════════════════════════════════════════════ */
 
