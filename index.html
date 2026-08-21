@@ -156,6 +156,25 @@
       </div>
     </li>
 
+    <li>
+      <a class="card" href="Mockups/CheckoutMessage/receipt.html">
+        <span class="card__eyebrow">Receipt &middot; /receipt</span>
+        <h3 class="card__title">Receipt</h3>
+        <p class="card__desc">
+          Where shipments become real orders. Each one keeps the name and number it had through
+          checkout and gains its own order number and a status note written for that shipment,
+          the day counts become dates, and the rail holds the one thing still to do &mdash;
+          schedule the delivery, or set up the RareStorage account.
+        </p>
+      </a>
+      <div class="examples">
+        <a class="chip" href="Mockups/CheckoutMessage/receipt.html?fulfilment=shipping">1 &middot; Shipping</a>
+        <a class="chip" href="Mockups/CheckoutMessage/receipt.html?fulfilment=delivery">2 &middot; Local Delivery</a>
+        <a class="chip" href="Mockups/CheckoutMessage/receipt.html?fulfilment=pickup">3 &middot; Pickup</a>
+        <a class="chip" href="Mockups/CheckoutMessage/receipt.html?fulfilment=rsonly">4 &middot; RS-only address</a>
+      </div>
+    </li>
+
   </ul>
 
   <h2>Reading these</h2>
@@ -163,7 +182,9 @@
     <strong>Every scenario is linkable.</strong> The toolbar writes to the query string, so any
     state can be sent to someone directly &mdash; the chips above are just examples.
     <br><br>
-    <strong>The receipt is not built yet.</strong> Its toolbar link is present and will 404.
+    <strong>All four checkout pages are here.</strong> The toolbar at the top of each one
+    switches examples and links to the next page, so a scenario can be followed from cart to
+    receipt.
     <br><br>
     <strong>The no-ZIP-code state is not in this round.</strong> Every page assumes a ZIP code is
     known. What the cart shows before one is entered needs more work and comes next.
@@ -173,8 +194,10 @@
     and goes out on the same delivery or is collected at the same counter &mdash; so it is
     another source inside one shipment, not a shipment of its own.
     <br><br>
-    <strong>Order review shows illustrative tax figures.</strong> Plausible rates per ZIP, not
-    quoted from the tax engine, and the New York transfer timing (5 days) is a placeholder.
+    <strong>Some figures are illustrative.</strong> Tax is a plausible rate per ZIP rather than
+    a quote from the tax engine; the New York transfer timing (28 days) is a working estimate;
+    and the receipt&rsquo;s order numbers, statuses and dates are derived from those same
+    estimates and an order placed on 21 August 2026.
     <br><br>
     <strong>Some copy is still placeholder.</strong> The pickup example's right-hand
     &ldquo;Pickup Information&rdquo; panel, and the store's street address, are stand-ins pending

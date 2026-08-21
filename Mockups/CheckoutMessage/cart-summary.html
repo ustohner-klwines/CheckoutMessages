@@ -55,11 +55,14 @@
       partial quantities and no explanation. Wording drafted; see NOTES.md.
     - Motion on shipment-count change. See NOTES.md "Parked ideas".
 
-  DROPPED DELIBERATELY
-    Per-group item/bottle counts ("3 items · 5 bottles"). The requirements doc
-    asks for a count per section; judged superfluous — the items are listed
-    directly beneath and countable. `.ship-group__count` is still styled in
-    the shared CSS if it is ever wanted back.
+  RESTORED 2026-08-21 — PER-SHIPMENT QUANTITY, AND VALUE ON LOCAL DELIVERY
+    The requirements doc asked for a count per section. It was judged superfluous
+    in the first pass — the items are listed directly beneath and countable — and
+    that judgement was overturned: a shopper checking a shipment against what they
+    think they ordered, or against a spend threshold, should not be adding up rows.
+    Every group now carries its quantity at the right of the heading, and the
+    LOCAL-DELIVERY group also carries its merchandise subtotal, labelled, because
+    that is the group whose value decides a threshold.
 
   HOW GROUPS ARE SEPARATED — no cards
     Groups are separated by a divider with 32px of space either side, and every
@@ -262,12 +265,36 @@
                 Local Delivery
                 <span class="flag flag--new">New</span>
               </h2>
+              <!-- Quantity AND value, for local delivery only (2026-08-21). Shoppers sitting
+                   near a spend threshold want to know what this shipment is worth without
+                   adding up the rows — so the merchandise subtotal is stated here.
+
+                   It is labelled `Subtotal`, not left as a bare amount: an unlabelled
+                   number beside the words "Local Delivery" reads as the delivery fee, which
+                   is the one thing this must not be mistaken for. It is also NOT the fee
+                   that was deliberately removed from this heading (see NOTES.md §7) — that
+                   was a price for one of two options; this is a fact about the contents,
+                   true whichever option the shopper takes. -->
+              <span class="ship-group__count" data-design-token="typography.variants.body2 colors.text.secondary">
+                9 items &middot; Subtotal <strong>$129.41</strong>
+                <span class="flag flag--new">New</span>
+              </span>
             </div>
           </div>
 
-          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+          <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
             Items below will be transferred to RareStorage Redwood City for Local Delivery
             to your address.
+          </p>
+          <!-- STORAGE IS STATED HERE AFTER ALL (2026-08-21). The bottles wait at a
+               RareStorage facility until the delivery runs, and RareStorage is first and
+               foremost a storage company — so the complimentary period is a fact about
+               this shipment, not only about the storage option on the shipping page.
+               It also does real work in this example: delivery is scheduled on the
+               receipt page, so this is what says there is no rush. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage.
+            <span class="flag flag--new">New</span>
           </p>
 
           <!-- Sub-section A — stock coming from another store -->
@@ -384,7 +411,7 @@
           <div class="ship-sub" data-when="composition:full|canv">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
               Transferring from RareStorage New York. Available for local delivery in
-              <strong>5 days</strong>
+              <strong>28 days</strong>
               <span class="flag flag--new">New</span>
             </div>
             <div class="ship-group__items">
@@ -439,6 +466,22 @@
 
             </div>
           </div>
+
+          <!-- RareStorage terms — one per page, collapsed, exactly as Example 1's
+               RareStorage shipment carries them. Added 2026-08-21 with the storage
+               sentence above: once the page states that storage is complimentary for
+               60 days, what happens on day 61 has to be reachable. One line closed. -->
+          <details class="disclose">
+            <summary data-design-token="typography.variants.caption colors.text.primary">What RareStorage means</summary>
+            <div class="disclose__body">
+              <ul class="callout__list" data-design-token="typography.variants.caption colors.text.primary">
+                <li>Secure, temperature-controlled storage, run by RareStorage.</li>
+                <li>You&rsquo;ll get Vault access by email after checkout.</li>
+                <li>Keep them stored or ship them on, whenever you like.</li>
+                <li>Free for 60 days, then $0.40 per bottle/month ($9.50 min). <span class="t-link">RareStorage.com</span></li>
+              </ul>
+            </div>
+          </details>
         </section>
 
 
@@ -463,11 +506,25 @@
                 Pickup from RareStorage Redwood City
                 <span class="flag flag--new">New</span>
               </h2>
+              <!-- Per-shipment quantity — restored 2026-08-21. The order-level line still
+                   carries the whole basket; this says how much of it is in this shipment,
+                   which is the number a shopper checks when a group looks light. -->
+              <span class="ship-group__count" data-design-token="typography.variants.body2 colors.text.secondary">
+                9 items
+                <span class="flag flag--new">New</span>
+              </span>
             </div>
           </div>
 
-          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+          <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
             Items below will be transferred to RareStorage Redwood City for Pickup
+          </p>
+          <!-- The pickup variant of the storage sentence, back in use (2026-08-21) and
+               now on the shipment that actually holds the bottles. The location is
+               dropped from it — the line above has just named the store. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage. Items can be picked up once available.
+            <span class="flag flag--new">New</span>
           </p>
 
           <!-- Sub-section A — stock coming from another store -->
@@ -580,7 +637,7 @@
           <div class="ship-sub" data-when="composition:full|canv">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
               Transferring from RareStorage New York. Available for pickup in
-              <strong>5 days</strong>
+              <strong>28 days</strong>
               <span class="flag flag--new">New</span>
             </div>
             <div class="ship-group__items">
@@ -635,6 +692,22 @@
 
             </div>
           </div>
+
+          <!-- RareStorage terms — one per page, collapsed, exactly as Example 1's
+               RareStorage shipment carries them. Added 2026-08-21 with the storage
+               sentence above: once the page states that storage is complimentary for
+               60 days, what happens on day 61 has to be reachable. One line closed. -->
+          <details class="disclose">
+            <summary data-design-token="typography.variants.caption colors.text.primary">What RareStorage means</summary>
+            <div class="disclose__body">
+              <ul class="callout__list" data-design-token="typography.variants.caption colors.text.primary">
+                <li>Secure, temperature-controlled storage, run by RareStorage.</li>
+                <li>You&rsquo;ll get Vault access by email after checkout.</li>
+                <li>Keep them stored or ship them on, whenever you like.</li>
+                <li>Free for 60 days, then $0.40 per bottle/month ($9.50 min). <span class="t-link">RareStorage.com</span></li>
+              </ul>
+            </div>
+          </details>
         </section>
 
 
@@ -650,6 +723,13 @@
               <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
                 Ships from Northern California
               </h2>
+              <!-- Per-shipment quantity — restored 2026-08-21. The order-level line still
+                   carries the whole basket; this says how much of it is in this shipment,
+                   which is the number a shopper checks when a group looks light. -->
+              <span class="ship-group__count" data-design-token="typography.variants.body2 colors.text.secondary">
+                5 items
+                <span class="flag flag--new">New</span>
+              </span>
             </div>
           </div>
 
@@ -774,6 +854,13 @@
                 Transfer to RareStorage
                 <span class="flag flag--new">New</span>
               </h2>
+              <!-- Per-shipment quantity — restored 2026-08-21. The order-level line still
+                   carries the whole basket; this says how much of it is in this shipment,
+                   which is the number a shopper checks when a group looks light. -->
+              <span class="ship-group__count" data-design-token="typography.variants.body2 colors.text.secondary">
+                4 items
+                <span class="flag flag--new">New</span>
+              </span>
             </div>
           </div>
 
@@ -782,6 +869,13 @@
                available") was tried here and removed: the cart says the same thing however
                the rest of the order is fulfilled. The pickup wording lives on the shipping
                page, where the storage sentence already differs by fulfilment. See §12. -->
+          <!-- Added 2026-08-21, so all four examples state the complimentary period on
+               the cart rather than only on the shipping page. ORDER RULE §11: what is
+               true of the whole shipment leads, the "items below" sentence closes. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage. Shipping will be charged separately by RareStorage.
+            <span class="flag flag--new">New</span>
+          </p>
           <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
             Items below transfer to RareStorage, leaving the New York warehouse in
             <strong>1&ndash;2 days</strong>.
@@ -886,23 +980,31 @@
                 Transfer to RareStorage
                 <span class="flag flag--new">New</span>
               </h2>
+              <!-- Per-shipment quantity — restored 2026-08-21. The order-level line still
+                   carries the whole basket; this says how much of it is in this shipment,
+                   which is the number a shopper checks when a group looks light. -->
+              <span class="ship-group__count" data-design-token="typography.variants.body2 colors.text.secondary">
+                4 items
+                <span class="flag flag--new">New</span>
+              </span>
             </div>
           </div>
 
           <!-- Shipment-level sentence: no origin, no timing. Both belong to the
                sub-sections below, because both differ between them. -->
           <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            60 day complimentary storage. Shipping will be charged separately by RareStorage.
+            <span class="flag flag--new">New</span>
+          </p>
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
             Items below will transfer to RareStorage
           </p>
 
-          <!-- NO STORAGE-TERMS SENTENCE HERE. It is stated inline on the shipping
-               page, but not on the cart: the cart's copy budget is the tightest on the
-               page set (see "Copy budget" above), and the cart's other RareStorage
-               example does not state the terms inline either — it holds them in the
-               collapsed "What RareStorage means" disclosure.
-
-               ⚠ But THIS example has neither, so Example 4's cart currently discloses
-               nothing about storage at all. See NOTES.md §10. -->
+          <!-- RESOLVED 2026-08-21. This group used to carry no storage terms at all —
+               neither the sentence nor the disclosure — which left the cart silent about
+               storage in the one example where the ENTIRE order goes into it. Both are
+               here now, and all four examples state the complimentary period on the cart.
+               The flag in NOTES.md §10 is closed. -->
 
           <!-- Sub-section A — New York stock, ready soonest -->
           <div class="ship-sub">
@@ -1017,6 +1119,21 @@
               </div>
             </div>
           </div>
+
+          <!-- RareStorage terms, collapsed — the whole order is going into storage in
+               this example, so the cart cannot be the one page that says nothing about
+               it. Closes the flag raised in NOTES.md §10. -->
+          <details class="disclose">
+            <summary data-design-token="typography.variants.caption colors.text.primary">What RareStorage means</summary>
+            <div class="disclose__body">
+              <ul class="callout__list" data-design-token="typography.variants.caption colors.text.primary">
+                <li>Secure, temperature-controlled storage, run by RareStorage.</li>
+                <li>You&rsquo;ll get Vault access by email after checkout.</li>
+                <li>Keep them stored or ship them on, whenever you like.</li>
+                <li>Free for 60 days, then $0.40 per bottle/month ($9.50 min). <span class="t-link">RareStorage.com</span></li>
+              </ul>
+            </div>
+          </details>
         </section>
 
 
@@ -1040,6 +1157,13 @@
                 <span data-when="group3:prearrival">Pre-arrival &mdash; expected by October 31, 2026</span>
                 <span data-when="group3:specialorder">Special order &mdash; expected by October 31, 2026</span>
               </h2>
+              <!-- Per-shipment quantity — restored 2026-08-21. The order-level line still
+                   carries the whole basket; this says how much of it is in this shipment,
+                   which is the number a shopper checks when a group looks light. -->
+              <span class="ship-group__count" data-design-token="typography.variants.body2 colors.text.secondary">
+                <span data-unless="fulfilment:rsonly">2 items</span><span data-when="fulfilment:rsonly">1 item</span>
+                <span class="flag flag--new">New</span>
+              </span>
             </div>
           </div>
 

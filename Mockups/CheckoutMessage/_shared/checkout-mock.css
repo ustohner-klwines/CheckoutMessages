@@ -356,11 +356,21 @@ body {
 /* .ship-group__fee--stacked removed with the "Transfer fee: $0.00" line it was
    built for. FIXED shipments quote no fee at all now — see NOTES.md §6. */
 
-/* Per-group item/bottle count — DROPPED as superfluous (the items are listed
-   right below). Style kept so it can be restored without a rebuild. */
+/* Per-group quantity, and on a local-delivery shipment its merchandise value.
+   Dropped in the first pass as superfluous — the items are listed right below —
+   and RESTORED 2026-08-21: a shopper checking a shipment against a spend
+   threshold, or against what they think they ordered, should not have to add up
+   the rows themselves. Sits at the right of the heading, in the same column the
+   amounts below it use.
+
+   The label matters: `Subtotal` and not a bare amount, because a number beside
+   the words "Local Delivery" reads as the delivery fee otherwise. */
 .ship-group__count {
   font-size: var(--font-size-body2); line-height: var(--line-height-body2);
   color: var(--color-text-secondary); white-space: nowrap;
+}
+.ship-group__count strong {
+  color: var(--color-text-primary); font-weight: var(--font-weight-bold);
 }
 
 /* The timing / constraint sentence. */
@@ -790,6 +800,7 @@ select.field__input { height: var(--input-height); cursor: pointer; }
    the brightest thing in a dimmed group. */
 .ship-group.is-locked .ship-group__title,
 .ship-group.is-locked .ship-group__fee,
+.ship-group.is-locked .ship-group__count,
 .ship-group.is-locked .ship-group__msg { opacity: .55; }
 
 /* "or" rule between carrier options and the RareStorage alternative. */
@@ -909,6 +920,75 @@ textarea.field__input {
   height: auto; min-height: 84px; resize: vertical;
   line-height: var(--line-height-body2);
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RECEIPT — per-shipment order header, status, emphasis rail cards
+   The receipt is the first page where a shipment has a real order number and a
+   real status, so it is the first page where the two have to sit together
+   without either one taking over the heading.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.receipt-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--spacing-md); margin-bottom: var(--spacing-md); }
+@media (min-width: 700px) {
+  .receipt-head { grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--spacing-xl); align-items: start; }
+}
+.receipt-head__meta { min-width: 0; }
+/* The order number is a reference the shopper quotes to us, not the name of the
+   thing — so it sits under the shipment heading rather than replacing it, which
+   is how the live page has it (Order # as the h4, the service as body text). */
+.receipt-head__order {
+  font-size: var(--font-size-body1); line-height: var(--line-height-body1);
+  color: var(--color-text-primary); margin-top: 2px;
+}
+.receipt-head__order strong { font-weight: var(--font-weight-bold); }
+.receipt-head__date {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+}
+
+.receipt-status { min-width: 0; }
+@media (min-width: 700px) { .receipt-status { text-align: right; } }
+.receipt-status__label {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);
+}
+/* One note per shipment, written for that shipment. The live page prints the
+   same sentence on every order — 'When your status changes to "Ready", we will
+   email you' — on shipments that never say Ready. */
+.receipt-status__note {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs); max-width: 240px;
+}
+@media (min-width: 700px) { .receipt-status__note { margin-left: auto; } }
+
+/* Rail cards that hold an action rather than a summary — the delivery
+   scheduler and the RareStorage account. 1.5px text.primary, as the live
+   components have it, so they read as the two things still to be done. */
+.rail-card--emphasis { border: 1.5px solid var(--color-text-primary); }
+.rail-card__lede {
+  font-size: var(--font-size-body1); line-height: var(--line-height-body1);
+  margin-bottom: var(--spacing-md);
+}
+.rail-card__meta {
+  display: flex; justify-content: space-between; gap: var(--spacing-md);
+  margin-top: var(--spacing-md); padding-top: var(--spacing-md);
+  border-top: 0.5px solid var(--color-grey-border);
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+}
+.rail-card__meta strong { color: var(--color-text-primary); font-weight: var(--font-weight-regular); }
+
+.rs-benefits { list-style: none; margin: var(--spacing-md) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.rs-benefits li {
+  display: flex; align-items: center; gap: var(--spacing-sm);
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-primary);
+}
+.rs-benefits svg { width: 16px; height: 16px; flex-shrink: 0; fill: var(--color-brand-charcoal); }
+
+.btn[disabled] { opacity: .45; cursor: default; box-shadow: none; }
 
 
 /* ══════════════════════════════════════════════════════════════════════════
