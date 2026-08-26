@@ -894,10 +894,28 @@ select.field__input { height: var(--input-height); cursor: pointer; }
    amounts stay, because this is the page where the shopper checks what they are
    paying for — that is the difference from the shipping page's preview rows,
    which drop the amounts too. */
-.cart-item__qtystatic {
-  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
-  color: var(--color-text-secondary); white-space: nowrap;
+/* ── Review and receipt item rows: quantity inline, amount right ──────────
+   Restored 2026-08-26 to the live layout (see the Order Summary on the live
+   review page): the quantity sits after the unit price on one caption line,
+   and the line total is right-aligned in the row's third column. The mockups
+   had put "Qty N" in that column and the total under the unit price, which
+   split one number away from the two it belongs with. The cart keeps its
+   stepper in the third column — there the quantity is editable. */
+.cart-item__qtyinline {
+  margin-left: var(--spacing-md);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
 }
+.cart-item__amount {
+  font-size: var(--font-size-body1); line-height: var(--line-height-body1);
+  color: var(--color-text-primary);
+  text-align: right; white-space: nowrap;
+}
+
+/* .cart-item__qtystatic was the right-column "Qty N" on review and receipt.
+   Unused since 2026-08-26 — the quantity moved inline after the unit price and
+   the amount took that column. Kept as a note rather than a live rule so the
+   class name does not look like an omission if it turns up in an old snapshot. */
 
 /* Total value — price1, regular weight, matching the live page. */
 .rail-row--total .rail-row__value--price {
