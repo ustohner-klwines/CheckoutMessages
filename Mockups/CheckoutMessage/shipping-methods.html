@@ -1024,16 +1024,28 @@
            there is no packaging choice to make at checkout. -->
       <hr class="divider" data-when="fulfilment:shipping|delivery|rsonly">
 
-      <!-- Shipping materials — existing component, unchanged -->
+      <!-- Shipping materials — existing component, copy VERBATIM from
+           src/components/Checkout/Shipping/DeliveryExtras.tsx:73-88 (restored in full
+           2026-08-26; it had been condensed to two lines so it would not dominate the
+           mockup, which lost wording that is legally and environmentally specific).
+
+           ⚠ VISIBILITY DOES NOT MATCH LIVE. This block shows for delivery here, but live
+           gates it on `shouldShowStyroOption = !isLocalDeliveryQuery.data` — keyed on
+           whether the ZIP is local-delivery ELIGIBLE, not on the method chosen. So on a
+           Bay Area ZIP the option never appears, even if the shopper picks shipping.
+           Example 2's data-when should probably be `fulfilment:shipping|rsonly`. Flagged,
+           not changed: only the copy was asked for. -->
       <div class="section-heading" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.h4 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h4">Shipping Materials</div>
       <p class="t-body2" style="margin-bottom: var(--spacing-md); max-width: 640px;" data-when="fulfilment:shipping|delivery|rsonly" data-design-token="typography.variants.body2 colors.text.primary">
-        Our wine shippers are tested and recommended by FedEx, and are made from
-        environmentally responsible recycled pulp.
+        K&amp;L is dedicated to finding the best materials to transport your purchase(s). Our
+        wine shippers have been tested and recommended by FedEx to ensure the highest standard
+        and the best care for your purchase(s). Our wine shippers are environmentally and
+        socially responsible; made from an eco-friendly, recycled pulp material.
       </p>
       <label class="checkbox" data-when="fulfilment:shipping|delivery|rsonly">
         <span class="checkbox__box" data-design-token="colors.grey.border components.card.borderRadius" data-mui-component="Checkbox"></span>
         <span class="checkbox__label" data-design-token="typography.variants.body2 colors.text.primary">
-          Opt out of our default shipping material and use styrofoam packing instead
+          Opt out of our default shipping material and use styrofoam packing materials instead?
         </span>
       </label>
 
