@@ -847,6 +847,32 @@
           </p>          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
             We&rsquo;ll contact you to arrange shipping or pickup for the item(s) below
           </p>
+          <div class="ship-group__items">
+            <div class="cart-item" data-unless="fulfilment:rsonly" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  2013 Chateau de Pommard Pommard (Pre-Arrival)
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $49.99<span class="cart-item__qtyinline" data-design-token="typography.variants.body2 colors.text.secondary">qty: 2</span></div>
+              </div>
+              <div class="cart-item__amount" data-design-token="typography.variants.body1 colors.text.primary">$99.98</div>
+            </div>
+            <div class="cart-item" data-when="fulfilment:rsonly" data-design-token="spacing.md spacing.lg">
+              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
+              </div>
+              <div class="cart-item__body">
+                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                  2013 Chateau de Pommard Pommard (Pre-Arrival)
+                </div>
+                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $49.99<span class="cart-item__qtyinline" data-design-token="typography.variants.body2 colors.text.secondary">qty: 1</span></div>
+              </div>
+              <div class="cart-item__amount" data-design-token="typography.variants.body1 colors.text.primary">$49.99</div>
+            </div>
+          </div>
           <!-- ═══ PRE-ARRIVAL SHIPPING PREFERENCE — EXAMPLES 3 AND 4 ONLY ═══
                NEW 2026-08-26. Shown when the shopper is already collecting (pickup) or
                cannot receive a carrier shipment at all (RS-only address). In both cases
@@ -874,10 +900,15 @@
                which is the honest answer two months before the wine lands, and in the
                pickup case it CLEARS the default checkout set silently.
 
+               BELOW THE ITEMS. Product, 2026-08-26. The items are what the shopper came
+               back to the receipt to see; the preference is a housekeeping question about
+               a delivery two months out. Reading order now runs heading → date → what we
+               will do → what you bought → one optional thing you may set.
+
                NO CARD, NO FILL. Product, 2026-08-26: the boxed version read as
                overpowering. It is one optional control inside a shipment nobody has to
                act on, so it sits in the flow at the weight of the copy around it. -->
-          <div data-when="fulfilment:pickup|rsonly" style="margin-bottom: var(--spacing-lg);" data-mui-component="PreArrivalPreferenceBox">
+          <div data-when="fulfilment:pickup|rsonly" style="margin-top: var(--spacing-lg);" data-mui-component="PreArrivalPreferenceBox">
             <p class="t-body2" style="margin: 0 0 var(--spacing-sm); font-weight: var(--font-weight-bold);" data-design-token="typography.variants.body2 typography.fontWeight.bold colors.text.primary">
               To make it easier, set your shipping preference for pre-arrival items
               <span class="flag flag--proposed">New</span>
@@ -918,32 +949,6 @@
               Your choice applies to future pre-arrival orders too. You can change it any time in
               My Account &rarr; Shipping Preferences.
             </p>
-          </div>
-          <div class="ship-group__items">
-            <div class="cart-item" data-unless="fulfilment:rsonly" data-design-token="spacing.md spacing.lg">
-              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
-                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
-              </div>
-              <div class="cart-item__body">
-                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
-                  2013 Chateau de Pommard Pommard (Pre-Arrival)
-                </div>
-                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $49.99<span class="cart-item__qtyinline" data-design-token="typography.variants.body2 colors.text.secondary">qty: 2</span></div>
-              </div>
-              <div class="cart-item__amount" data-design-token="typography.variants.body1 colors.text.primary">$99.98</div>
-            </div>
-            <div class="cart-item" data-when="fulfilment:rsonly" data-design-token="spacing.md spacing.lg">
-              <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
-                <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
-              </div>
-              <div class="cart-item__body">
-                <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
-                  2013 Chateau de Pommard Pommard (Pre-Arrival)
-                </div>
-                <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $49.99<span class="cart-item__qtyinline" data-design-token="typography.variants.body2 colors.text.secondary">qty: 1</span></div>
-              </div>
-              <div class="cart-item__amount" data-design-token="typography.variants.body1 colors.text.primary">$49.99</div>
-            </div>
           </div>
         </section>
 
