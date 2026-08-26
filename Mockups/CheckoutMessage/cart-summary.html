@@ -289,6 +289,15 @@
           <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
             Local delivery to your address from RareStorage Redwood City
           </p>
+          <!-- ADDED 2026-08-26. This line was deliberately absent from the cart on the
+               argument that nothing is settled here yet. Overturned for consistency: the
+               live cart carries the delivery-type selector (EstimateTimeNotice — "Select a
+               delivery type or add your zipcode below"), so local delivery IS chosen by
+               this point and the next step is real. All three pages now say it. -->
+          <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
+            You can select delivery options on the receipt page
+            <span class="flag flag--new">New</span>
+          </p>
           <!-- REMOVED 2026-08-26 — "60 day complimentary storage."
                The premise it rested on was corrected: local delivery and pickup are
                fulfilled FROM RareStorage Redwood City, but the bottles never enter
