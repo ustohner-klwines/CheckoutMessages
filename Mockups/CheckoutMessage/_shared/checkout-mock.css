@@ -409,6 +409,24 @@ body {
    separates the rows, which is what makes the group read as a single unit. */
 .ship-group__items { display: flex; flex-direction: column; gap: var(--spacing-lg); }
 
+/* ── The cart before a ZIP code — a flat list, no grouping ────────────────
+   These rows carry rules between them and the grouped rows above deliberately
+   do not. In a group, the shipment heading is the boundary and space alone
+   separates the items inside it; a rule there would compete with the heading
+   and split one shipment into three. With no heading there is nothing marking
+   where one item ends, so the rule does that job — which is also what the live
+   cart does today. Same component, different separator, for a stated reason. */
+.cart-flat { display: flex; flex-direction: column; }
+.cart-flat__head {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  font-weight: var(--font-weight-bold); color: var(--color-text-secondary);
+  text-align: right;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 0.5px solid var(--color-grey-border);
+}
+.cart-flat .cart-item { padding: var(--spacing-lg) 0; }
+.cart-flat .cart-item + .cart-item { border-top: 0.5px solid var(--color-grey-border); }
+
 /* ── Sub-section within a shipment ────────────────────────────────────────
    Local delivery consolidates several source stores into ONE shipment, but
    each source has its own timing. So the group stays one shipment, and the

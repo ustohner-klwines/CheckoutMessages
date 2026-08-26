@@ -101,6 +101,12 @@
   </span>
 
   <span class="mock-bar__group">
+    <span class="mock-bar__label">ZIP</span>
+    <button data-ctl="zip" data-val="yes">ZIP set</button>
+    <button data-ctl="zip" data-val="no">No ZIP yet</button>
+  </span>
+
+  <span class="mock-bar__group">
     <span class="mock-bar__label">Group 3</span>
     <button data-ctl="group3" data-val="prearrival">Pre-arrival</button>
     <button data-ctl="group3" data-val="specialorder">Special order</button>
@@ -179,8 +185,10 @@
 
   <div class="page-title">
     <h1 class="t-h4" data-design-token="typography.variants.h4 colors.text.primary" data-mui-component="Typography variant=h4">Cart Summary</h1>
-    <!-- Item count moved onto the summary line below, as "Quantity: N items". -->
-
+    <!-- WITH a ZIP the item count lives on the order-level summary line below, as
+         "Quantity: N items". WITHOUT one there is no summary line, so the count comes
+         back up here — which is where the live page keeps it. -->
+    <span class="t-body2" data-when="zip:no" data-design-token="typography.variants.body2 colors.text.secondary">11 items</span>
   </div>
 
   <div class="checkout-layout">
@@ -197,7 +205,7 @@
       <!-- All three examples use the same line; the count comes from however
            many groups are actually visible. -->
       <div class="order-summary-msg"
-           data-when="fulfilment:shipping|delivery|pickup|rsonly; composition:full|canv"
+           data-when="zip:yes; fulfilment:shipping|delivery|pickup|rsonly; composition:full|canv"
            data-design-token="colors.grey.border spacing.md spacing.xl">
         <svg class="order-summary-msg__icon" viewBox="0 0 24 24" aria-hidden="true"
              data-design-token="colors.brand.charcoal"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
@@ -237,7 +245,163 @@
         local delivery / pickup consolidation instead — see Sub-section C in each.)
       </div>
 
-      <div class="ship-groups">
+      <!-- ═══════════════════════════════════════════════════════════════
+           NO ZIP CODE YET — THE FLAT CART
+           >>> DELIVERABLE <<<  Added 2026-08-26.
+
+           Every message on this page is derived from a destination: which
+           warehouse serves it, whether stock has to be transferred, how many
+           shipments that makes, how long each takes. With no ZIP code there is
+           no destination, so there is nothing true to say — and the page says
+           nothing. It is a flat list of what is in the cart, which is what the
+           live page does today.
+
+           NOT a degraded version of the grouped view. No group headings, no
+           sub-sections, no messages, no shipment count, no timings, no
+           "estimates unavailable" placeholder. A greyed-out or hedged version of
+           the real thing would invite the shopper to read meaning into an
+           absence; the flat list simply has not asked the question yet.
+
+           THE ONE PLACE THAT DOES SPEAK is the rail: "Estimate Prep Time" is
+           where the ZIP goes in, and it is the only thing on the page that
+           refers to what is missing.
+
+           SAME LIST IN ALL FOUR EXAMPLES, deliberately: the examples differ by
+           destination, and there is no destination here. This is also why the
+           split item appears once — see the note on it below.
+           ═══════════════════════════════════════════════════════════════ -->
+      <div class="cart-flat" data-when="zip:no">
+
+        <!-- Column header, as on the live cart. The grouped view has no room for
+             it — the steppers sit under a shipment heading instead. -->
+        <div class="cart-flat__head" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.secondary">
+          QTY
+        </div>
+
+          <div class="cart-item" data-design-token="spacing.md spacing.lg">
+            <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+              <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#5D4037"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+            </div>
+            <div class="cart-item__body">
+              <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                2019 Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)
+              </div>
+              <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $21.99</div>
+              <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$43.98</div>
+              <div class="cart-item__actions">
+                <span class="cart-item__action">Remove</span>
+                <span class="cart-item__action">Save to Favorites</span>
+              </div>
+            </div>
+            <div class="cart-item__qty">
+              <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                <button type="button" aria-label="Decrease quantity">&minus;</button>
+                <span class="qty-stepper__value">2</span>
+                <button type="button" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="cart-item" data-design-token="spacing.md spacing.lg">
+            <!-- THE SPLIT ITEM, WHOLE. With a ZIP this line appears twice — 1 bottle in
+                 the carrier group, 1 in the RareStorage group — and nothing explains why
+                 (the deferred split-quantity disclosure, NOTES.md "Deferred"). Here it is
+                 one row of 2, because a cart line is one row until a destination splits
+                 it. The flat view has no split to disclose. -->
+            <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+              <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#6E0C0E"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+            </div>
+            <div class="cart-item__body">
+              <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                2018 P.S Garcia &ldquo;Facundo&rdquo; Red Blend Maule (Elsewhere $30)
+              </div>
+              <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $17.99</div>
+              <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$35.98</div>
+              <div class="cart-item__actions">
+                <span class="cart-item__action">Remove</span>
+                <span class="cart-item__action">Save to Favorites</span>
+              </div>
+            </div>
+            <div class="cart-item__qty">
+              <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                <button type="button" aria-label="Decrease quantity">&minus;</button>
+                <span class="qty-stepper__value">2</span>
+                <button type="button" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="cart-item" data-design-token="spacing.md spacing.lg">
+            <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+              <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="20" rx="2" fill="#3E2723"/><rect x="3" y="20" width="16" height="38" rx="3" fill="#8D9440"/><rect x="3" y="30" width="16" height="16" fill="#FAF8F8" opacity=".85"/></svg>
+            </div>
+            <div class="cart-item__body">
+              <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                2023 Esk Valley Sauvignon Blanc Marlborough
+              </div>
+              <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $14.99</div>
+              <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$29.98</div>
+              <div class="cart-item__actions">
+                <span class="cart-item__action">Remove</span>
+                <span class="cart-item__action">Save to Favorites</span>
+              </div>
+            </div>
+            <div class="cart-item__qty">
+              <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                <button type="button" aria-label="Decrease quantity">&minus;</button>
+                <span class="qty-stepper__value">2</span>
+                <button type="button" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="cart-item" data-design-token="spacing.md spacing.lg">
+            <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+              <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="6" width="8" height="14" rx="2" fill="#2E4A2E"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#3F7043"/><rect x="4" y="30" width="14" height="14" fill="#FAF8F8" opacity=".85"/></svg>
+            </div>
+            <div class="cart-item__body">
+              <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                Kizakura &ldquo;Bushido Way of the Warrior&rdquo; Ginjo Genshu Sake (180ml can)
+              </div>
+              <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $6.49</div>
+              <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$19.47</div>
+              <div class="cart-item__actions">
+                <span class="cart-item__action">Remove</span>
+                <span class="cart-item__action">Save to Favorites</span>
+              </div>
+            </div>
+            <div class="cart-item__qty">
+              <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                <button type="button" aria-label="Decrease quantity">&minus;</button>
+                <span class="qty-stepper__value">3</span>
+                <button type="button" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="cart-item" data-design-token="spacing.md spacing.lg">
+            <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+              <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
+            </div>
+            <div class="cart-item__body">
+              <div class="cart-item__name" data-design-token="typography.variants.h5 colors.text.linked" data-mui-component="Typography variant=h5">
+                2013 Chateau de Pommard Pommard (Pre-Arrival)
+              </div>
+              <div class="cart-item__unit" data-design-token="typography.variants.caption colors.text.secondary">Unit Price: $49.99</div>
+              <div class="cart-item__total" data-design-token="typography.variants.body1 colors.text.primary">$99.98</div>
+              <div class="cart-item__actions">
+                <span class="cart-item__action">Remove</span>
+                <span class="cart-item__action">Save to Favorites</span>
+              </div>
+            </div>
+            <div class="cart-item__qty">
+              <div class="qty-stepper" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="ButtonGroup">
+                <button type="button" aria-label="Decrease quantity">&minus;</button>
+                <span class="qty-stepper__value">2</span>
+                <button type="button" aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+          </div>
+
+      </div>
+
+      <div class="ship-groups" data-when="zip:yes">
 
         <!-- ═══════════════════════════════════════════════════════════════
              GROUP 1 (EXAMPLE 2) — LOCAL DELIVERY, CONSOLIDATED
@@ -743,9 +907,12 @@
             Items below leave our warehouse in <strong>1&ndash;2 days</strong>. Transit time depends on your address.
             <span class="flag flag--changed">Reworded</span>
           </p>
-          <p class="ship-group__msg" data-when="fulfilment:shipping; zip:no" data-design-token="typography.variants.body2 colors.text.primary">
-            Items below leave our warehouse in <strong>1&ndash;2 days</strong>. Add a ZIP code for shipping options.
-          </p>
+          <!-- REMOVED 2026-08-26. This was the no-ZIP variant: "Items below leave our
+               warehouse in 1-2 days. Add a ZIP code for shipping options." It cannot
+               render any more — with no ZIP there are no groups at all, only the flat
+               list above — and it was making a claim the flat view refuses to make. A
+               1-2 day dispatch window is a property of the warehouse that serves the
+               destination, so without a destination it is not knowable. -->
 
           <div class="ship-group__items">
 
@@ -1315,8 +1482,13 @@
         <p class="t-caption" data-when="zip:yes" data-design-token="typography.variants.caption colors.text.secondary">
           Estimates are shown on each shipment above.
         </p>
+        <!-- REWORDED 2026-08-26 with the flat cart. The old line promised a partial
+             answer — "Without a ZIP we can only show time to leave our warehouse" — and
+             the flat cart shows no timings at all, because dispatch time depends on
+             which warehouse serves the address. This says what the ZIP unlocks instead
+             of what is missing. -->
         <p class="t-caption" data-when="zip:no" data-design-token="typography.variants.caption colors.text.secondary">
-          Without a ZIP we can only show time to leave our warehouse.
+          Add a ZIP code to see how this order will be split and when each part is ready.
         </p>
       </div>
 
@@ -1338,18 +1510,16 @@
 
 <script src="_shared/checkout-mock.js"></script>
 <script>
-  /* `zip` and `composition` stay in the state with no toolbar controls. Their
-     variants are DORMANT, not deleted:
+  /* `zip` now has a toolbar control: the no-ZIP cart was designed on 2026-08-26 and
+     is a reviewable state rather than a gap. `zip:no` renders the flat cart and hides
+     every grouped block, because grouping is derived from a destination.
 
-       zip:no        the cart before a ZIP code is entered — needs more design work,
-                     cut from the first stakeholder review rather than abandoned
-       composition   the four basket shapes (CA only, all-RareStorage, and so on)
+     `composition` is still DORMANT — the four basket shapes (CA only, all-RareStorage,
+     and so on) have no buttons, and are reachable on the URL for an internal look:
+       ?composition=canv | ca | allrs      ?zip=no
 
-     Both are still reachable on the URL for an internal look:
-       ?zip=no        ?composition=canv | ca | allrs
-
-     Restore either control by putting its buttons back in the toolbar; nothing else
-     has to change. The `data-when` conditions throughout the file are untouched. */
+     Restore its control by putting the buttons back in the toolbar; nothing else has
+     to change. The `data-when` conditions throughout the file are untouched. */
   KLMock.init({
     fulfilment:  "shipping",
     composition: "full",
@@ -1359,12 +1529,17 @@
 
   window.onMockRender = function (state) {
     /* Some toolbar combinations have no groups at all (Example 3 has no
-       RareStorage). Show a note rather than a blank column. */
+       RareStorage). Show a note rather than a blank column.
+
+       Never in the no-ZIP state: there are no groups there BY DESIGN — the flat cart
+       is the whole column — so the guard would report the design as a broken
+       combination. */
     var shown = Array.prototype.filter.call(
       document.querySelectorAll("[data-group]"),
       function (g) { return !g.classList.contains("is-hidden"); }
     ).length;
-    document.querySelector('[data-block="empty"]').classList.toggle("is-hidden", shown > 0);
+    document.querySelector('[data-block="empty"]')
+      .classList.toggle("is-hidden", shown > 0 || state.zip === "no");
   };
   KLMock.render();
 </script>
