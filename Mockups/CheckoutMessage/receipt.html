@@ -464,10 +464,19 @@
             <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
               Don&rsquo;t head over just yet!
             </div>
+            <!-- REWORDED 2026-08-26, and this corrects a factual error in the LIVE copy, not
+                 just its length. CurbsidePickupBox.tsx says "when your status changes to
+                 'Ready' AND YOU ARRIVE AT OUR STORE, the button below will activate" — but
+                 activation is `isDisabled = !receipt.IsPickupReady || Status === "closed"`.
+                 Arrival plays no part in it; there is no geolocation in the flow. The button
+                 enables on the server state, and the shopper clicks it on arrival — which is
+                 what the button label ("I'm parked and ready for pickup") has always implied.
+
+                 Also split into one fact per sentence: the nested conditional was what made
+                 the original bulky. See MESSAGES.md, receipt section. -->
             <p class="callout__text" data-design-token="typography.variants.body2 colors.text.primary">
-              We will email you once your items are ready. If you&rsquo;d like to pick up via
-              curbside: when your status changes to &ldquo;Ready&rdquo; and you arrive at our store,
-              the button below will activate.
+              We&rsquo;ll email you once your items are ready. For curbside pickup, the button
+              below activates once your order is Ready. Click it when you are parked at our store.
             </p>
             <button class="btn btn--primary" disabled data-design-token="colors.cta.primary colors.text.onDark" data-mui-component="Button variant=contained disabled">
               I&rsquo;m parked and ready for pickup
