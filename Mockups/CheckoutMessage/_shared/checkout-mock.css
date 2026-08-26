@@ -955,6 +955,17 @@ textarea.field__input {
 /* The order number is a reference the shopper quotes to us, not the name of the
    thing — so it sits under the shipment heading rather than replacing it, which
    is how the live page has it (Order # as the h4, the service as body text). */
+/* Service and its fee, on the shipment that has one. Live's review page shows both
+   (ShipwayDescription as the order label, "Shipping Fee: $61.00" beneath); the receipt
+   restores them because the service is the promise the shopper paid for and the fee is
+   what they reconcile. Sits above the order number, in body2 so the order number stays
+   the largest thing in the block. */
+.receipt-head__service {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  color: var(--color-text-primary); margin-top: 2px;
+}
+.receipt-head__service strong { font-weight: var(--font-weight-bold); }
+
 .receipt-head__order {
   font-size: var(--font-size-body1); line-height: var(--line-height-body1);
   color: var(--color-text-primary); margin-top: 2px;

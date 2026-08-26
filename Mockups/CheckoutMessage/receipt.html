@@ -86,14 +86,16 @@
     <button data-ctl="fulfilment" data-val="rsonly">Example 4: RS only address</button>
   </span>
 
-  <!-- Pickup readiness. The receipt is the one page a shopper returns to: at checkout the
-       order is never ready, and the state that matters most — the one where they are in the
-       car park — happens on a later visit. The live component already branches on
-       IsPickupReady; this control shows both sides of that branch. -->
-  <span class="mock-bar__group" data-when="fulfilment:pickup">
-    <span class="mock-bar__label">Pickup status</span>
-    <button data-ctl="pickupready" data-val="no">Not ready</button>
-    <button data-ctl="pickupready" data-val="yes">Ready</button>
+  <!-- ORDER STATUS. The receipt is the one page a shopper returns to: at checkout nothing is
+       ready, and the states that matter most — tracking a shipment, walking into the store —
+       happen on a later visit. One axis rather than one control per example, because "Picking
+       then Ready" is the same progression whatever the fulfilment method (NOTES.md §16.2), and
+       live's own status note teaches it. Shown on the examples that have a second state:
+       shipping and pickup today; local delivery and the RareStorage transfer could follow. -->
+  <span class="mock-bar__group" data-when="fulfilment:shipping|pickup">
+    <span class="mock-bar__label">Order status</span>
+    <button data-ctl="status" data-val="picking">Picking</button>
+    <button data-ctl="status" data-val="ready">Ready</button>
   </span>
 
   <span class="mock-bar__spacer"></span>
@@ -209,6 +211,16 @@
                   Ships from Northern California
                 </h2>
               </div>
+              <!-- ADDED 2026-08-26 — the service and its fee. Live's review page labels each
+                   order with ShipwayDescription and states "Shipping Fee: $61.00" beneath it;
+                   the redesign had replaced both with the source warehouse. On a receipt the
+                   shopper has paid for a NAMED promise, and the fee is the figure they would
+                   reconcile against a card statement. Both are already in the payload — the
+                   fee arrives as a ReceiptItem called "Shipping Charges", which the front end
+                   currently filters out (CartList.tsx:47). -->
+              <div class="receipt-head__service" data-design-token="typography.variants.body2 colors.text.primary">
+                FedEx Next-Day Priority &middot; Shipping fee <strong>$61.00</strong>
+              </div>
               <div class="receipt-head__order" data-design-token="typography.variants.body1 colors.text.primary">
                 Order <strong>#4839217</strong>
               </div>
@@ -218,7 +230,8 @@
             </div>
             <div class="receipt-status">
               <div class="receipt-status__label" data-design-token="typography.variants.caption colors.text.secondary">Status</div>
-              <span class="status-chip" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Picking</span>
+              <span class="status-chip" data-when="status:picking" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Picking</span>
+              <span class="status-chip" data-when="status:ready" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Ready</span>
               <!-- The live default status note, verbatim (OrderStatusHeader.tsx:6,
                    DEFAULT_STATUS_NOTE). It replaced "We'll email tracking when it leaves our
                    warehouse." on 2026-08-26, because that promised tracking unconditionally
@@ -226,13 +239,28 @@
                    props on the same component, so a shipment may have no tracker at all.
                    This also settles the status vocabulary — "Ready" is live's generic term
                    across fulfilment types, not a pickup-only value. -->
-              <div class="receipt-status__note" data-design-token="typography.variants.caption colors.text.secondary">
+              <div class="receipt-status__note" data-when="status:picking" data-design-token="typography.variants.caption colors.text.secondary">
                 When your status changes to &ldquo;Ready&rdquo;, we will email you at the address provided.
               </div>
+              <!-- READY STATE. The note has done its job — the email has gone — so the space
+                   goes to the one thing worth having once a shipment is moving. OrderStatusHeader
+                   already takes shipTracker and trackingUrl, and they are OPTIONAL: when a
+                   shipment has no tracker this row is simply absent, which is why the copy never
+                   promises tracking. -->
+              <div class="receipt-status__note" data-when="status:ready" data-design-token="typography.variants.caption colors.text.secondary">
+                <span class="t-link">Track your shipment &rsaquo;</span>
+              </div>
             </div>
-          </div>          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
-            Leaves our warehouse by <strong>Tuesday, August 25</strong>. Transit time depends on your address
-            <span class="flag flag--changed">Reworded</span>
+          </div>          <!-- "Transit time depends on your address" was CUT here on 2026-08-26. It is right
+               on the cart, where there may be no ZIP and the address can still change. On the
+               receipt the address is printed in the rail and cannot be changed, so the sentence
+               named a fixed fact and still declined to say how long — nothing to act on and
+               nothing learned. What is left is the fact the shopper can use. -->
+          <p class="ship-group__msg" data-when="status:picking" data-design-token="typography.variants.body2 colors.text.primary">
+            Leaves our warehouse by <strong>Tuesday, August 25</strong>.
+          </p>
+          <p class="ship-group__msg" data-when="status:ready" data-design-token="typography.variants.body2 colors.text.primary">
+            Left our warehouse <strong>Tuesday, August 25</strong>.
           </p>          <div class="ship-group__items">
             <div class="cart-item" data-design-token="spacing.md spacing.lg">
               <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
@@ -442,8 +470,8 @@
               <!-- The copy in the curbside box names this status ("activates once your order
                    is Ready"), so the chip has to be able to show it. Picking while staff
                    gather the order, Ready once it can be collected. -->
-              <span class="status-chip" data-when="pickupready:no" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Picking</span>
-              <span class="status-chip" data-when="pickupready:yes" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Ready</span>
+              <span class="status-chip" data-when="status:picking" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Picking</span>
+              <span class="status-chip" data-when="status:ready" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Ready</span>
             </div>
           </div>          <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
             Collect from RareStorage Redwood City
@@ -457,7 +485,7 @@
                the disabled button are the live ones; only the surface is the palette's
                background.subtle rather than grey[100]. -->
           <div class="callout" style="margin-bottom: var(--spacing-lg);" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding" data-mui-component="CurbsidePickupBox">
-            <div class="callout__title" data-when="pickupready:no" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+            <div class="callout__title" data-when="status:picking" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
               Don&rsquo;t head over just yet!
             </div>
             <!-- REWORDED 2026-08-26, and this corrects a factual error in the LIVE copy, not
@@ -470,7 +498,7 @@
 
                  Also split into one fact per sentence: the nested conditional was what made
                  the original bulky. See MESSAGES.md, receipt section. -->
-            <p class="callout__text" data-when="pickupready:no" data-design-token="typography.variants.body2 colors.text.primary">
+            <p class="callout__text" data-when="status:picking" data-design-token="typography.variants.body2 colors.text.primary">
               We&rsquo;ll email you once your items are ready. For curbside pickup, the button
               below activates once your order is Ready. Click it when you are parked at our store.
             </p>
@@ -478,13 +506,13 @@
                  the button is live — so restating them describes the shopper's past. All that
                  is left is the action, and "the button below" replaces "it" because the
                  sentence now stands alone. Shortest copy in the state where they are acting. -->
-            <p class="callout__text" data-when="pickupready:yes" data-design-token="typography.variants.body2 colors.text.primary">
+            <p class="callout__text" data-when="status:ready" data-design-token="typography.variants.body2 colors.text.primary">
               Click the button below when you are parked at our store.
             </p>
-            <button class="btn btn--primary" disabled data-when="pickupready:no" data-design-token="colors.cta.primary colors.text.onDark" data-mui-component="Button variant=contained disabled">
+            <button class="btn btn--primary" disabled data-when="status:picking" data-design-token="colors.cta.primary colors.text.onDark" data-mui-component="Button variant=contained disabled">
               I&rsquo;m parked and ready for pickup
             </button>
-            <button class="btn btn--primary" data-when="pickupready:yes" data-design-token="colors.cta.primary colors.text.onDark" data-mui-component="Button variant=contained">
+            <button class="btn btn--primary" data-when="status:ready" data-design-token="colors.cta.primary colors.text.onDark" data-mui-component="Button variant=contained">
               I&rsquo;m parked and ready for pickup
             </button>
             <p class="t-caption" style="margin-top: var(--spacing-sm); margin-bottom: 0;" data-design-token="typography.variants.caption colors.text.secondary">
@@ -1051,7 +1079,7 @@
 
      `composition` and `zip` are not used: the basket is settled and the order is
      placed. Only the Example switch matters. */
-  KLMock.init({ fulfilment: "shipping", pickupready: "no" });
+  KLMock.init({ fulfilment: "shipping", status: "picking" });
   KLMock.render();
 </script>
 </body>
