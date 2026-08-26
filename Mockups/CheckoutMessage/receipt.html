@@ -219,9 +219,15 @@
             <div class="receipt-status">
               <div class="receipt-status__label" data-design-token="typography.variants.caption colors.text.secondary">Status</div>
               <span class="status-chip" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Picking</span>
+              <!-- The live default status note, verbatim (OrderStatusHeader.tsx:6,
+                   DEFAULT_STATUS_NOTE). It replaced "We'll email tracking when it leaves our
+                   warehouse." on 2026-08-26, because that promised tracking unconditionally
+                   and tracking is not guaranteed: shipTracker and trackingUrl are OPTIONAL
+                   props on the same component, so a shipment may have no tracker at all.
+                   This also settles the status vocabulary — "Ready" is live's generic term
+                   across fulfilment types, not a pickup-only value. -->
               <div class="receipt-status__note" data-design-token="typography.variants.caption colors.text.secondary">
-                We&rsquo;ll email tracking when it leaves our warehouse.
-                <span class="flag flag--changed">Reworded</span>
+                When your status changes to &ldquo;Ready&rdquo;, we will email you at the address provided.
               </div>
             </div>
           </div>          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
