@@ -866,46 +866,57 @@
                (ShipwayRepository.cs:189). They are shown here as they really are — which
                is why they break the naming this spec settled ("Pickup at RareStorage
                Redwood City", bare "RareStorage", and the internal "Hold (by RS)").
-               See MESSAGES.md M3.3. -->
-          <div class="callout" data-when="fulfilment:pickup|rsonly" style="margin-bottom: var(--spacing-lg);" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding" data-mui-component="PreArrivalPreferenceBox">
-            <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+               See MESSAGES.md R3.1.
+
+               THE WAY OUT is the first option, "I'll choose shipping once the items
+               arrive" — the live list's empty-string key, which every shopper can already
+               hold today; only its blank label is new. Choosing it stores no destination,
+               which is the honest answer two months before the wine lands, and in the
+               pickup case it CLEARS the default checkout set silently.
+
+               NO CARD, NO FILL. Product, 2026-08-26: the boxed version read as
+               overpowering. It is one optional control inside a shipment nobody has to
+               act on, so it sits in the flow at the weight of the copy around it. -->
+          <div data-when="fulfilment:pickup|rsonly" style="margin-bottom: var(--spacing-lg);" data-mui-component="PreArrivalPreferenceBox">
+            <p class="t-body2" style="margin: 0 0 var(--spacing-sm); font-weight: var(--font-weight-bold);" data-design-token="typography.variants.body2 typography.fontWeight.bold colors.text.primary">
               To make it easier, set your shipping preference for pre-arrival items
               <span class="flag flag--proposed">New</span>
-            </div>
+            </p>
             <div class="field" style="max-width: 360px; margin-bottom: var(--spacing-sm);">
               <label class="field__label" for="pa-pref" data-design-token="typography.variants.subtitle2 colors.text.secondary">Ship To</label>
               <!-- PICKUP: already filled in. Choosing a pickup location during checkout
                    writes that location into this very field
                    (ShippingPreferencesController.cs:186), so by the time the receipt
-                   renders the preference is set and the control is a confirmation. -->
+                   renders the preference is set and the control is a confirmation.
+                   The opt-out is still first in the list, unselected — selecting it here
+                   CLEARS a default the shopper was never asked about. -->
               <select class="field__input" id="pa-pref" data-when="fulfilment:pickup" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="Select size=small">
-              <option selected>Pickup at RareStorage Redwood City</option>
-              <option>Pickup at RareStorage San Francisco</option>
-              <option>Pickup at RareStorage Hollywood</option>
-              <option>Pickup at RareStorage Culver City</option>
-              <option>RareStorage</option>
-              <option>Hold (by RS)</option>
-              <option>Pickup at RareStorage New York</option>
+                <option value="">I&rsquo;ll choose shipping once the items arrive</option>
+                <option selected>Pickup at RareStorage Redwood City</option>
+                <option>Pickup at RareStorage San Francisco</option>
+                <option>Pickup at RareStorage Hollywood</option>
+                <option>Pickup at RareStorage Culver City</option>
+                <option>RareStorage</option>
+                <option>Hold (by RS)</option>
+                <option>Pickup at RareStorage New York</option>
               </select>
               <!-- RS-ONLY ADDRESS: nothing has been written, because no pickup location
                    was chosen. This is the empty state, and the state where the control
-                   earns its place. The live list's first entry is genuinely blank; a
-                   blank row reads as a bug, so it carries the meaning of leaving it
-                   blank instead — ⚠ proposed copy, see MESSAGES.md M3.3. -->
+                   earns its place — so the opt-out is what it opens on. -->
               <select class="field__input" data-when="fulfilment:rsonly" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="Select size=small">
-                <option value="" selected>No preference &mdash; we&rsquo;ll contact you</option>
-              <option>Pickup at RareStorage Redwood City</option>
-              <option>Pickup at RareStorage San Francisco</option>
-              <option>Pickup at RareStorage Hollywood</option>
-              <option>Pickup at RareStorage Culver City</option>
-              <option>RareStorage</option>
-              <option>Hold (by RS)</option>
-              <option>Pickup at RareStorage New York</option>
+                <option value="" selected>I&rsquo;ll choose shipping once the items arrive</option>
+                <option>Pickup at RareStorage Redwood City</option>
+                <option>Pickup at RareStorage San Francisco</option>
+                <option>Pickup at RareStorage Hollywood</option>
+                <option>Pickup at RareStorage Culver City</option>
+                <option>RareStorage</option>
+                <option>Hold (by RS)</option>
+                <option>Pickup at RareStorage New York</option>
               </select>
             </div>
             <p class="t-caption" style="margin: 0;" data-design-token="typography.variants.caption colors.text.secondary">
-              This becomes the default for every pre-arrival order on your account. You can change
-              it any time in My Account &rarr; Shipping Preferences.
+              Your choice applies to future pre-arrival orders too. You can change it any time in
+              My Account &rarr; Shipping Preferences.
             </p>
           </div>
           <div class="ship-group__items">
