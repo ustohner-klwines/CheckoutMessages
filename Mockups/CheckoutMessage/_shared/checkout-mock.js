@@ -106,6 +106,14 @@
       if (key in state) state[key] = value;
     });
 
+    /* ?chrome=off hides the mockup toolbar. Used by phone.html, which frames a
+       page at 390px and supplies its own controls — the toolbar inside the
+       frame would be reviewing the mockup rather than the design. Not a media
+       query: on a real phone, at the same width, the toolbar is still wanted. */
+    if (params.get("chrome") === "off") {
+      document.body.classList.add("mock-chrome-off");
+    }
+
     document.addEventListener("click", function (e) {
       var btn = e.target.closest ? e.target.closest("[data-ctl]") : null;
       if (!btn) return;

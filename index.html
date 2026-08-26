@@ -175,6 +175,26 @@
       </div>
     </li>
 
+    <li>
+      <a class="card" href="Mockups/CheckoutMessage/phone.html">
+        <span class="card__eyebrow">Mobile &middot; /phone</span>
+        <h3 class="card__title">Mobile preview</h3>
+        <p class="card__desc">
+          The same four pages at 390 &times; 844, framed as a phone so the mobile layout can be
+          reviewed in a desktop window. Not separate mockups &mdash; the same files, with a real
+          mobile layer, so a wording change lands in both views at once. Below 600px the
+          shipping page&rsquo;s item lists open as bottom sheets, matching the one bottom sheet
+          the live app has.
+        </p>
+      </a>
+      <div class="examples">
+        <a class="chip" href="Mockups/CheckoutMessage/phone.html?page=cart-summary">Cart</a>
+        <a class="chip" href="Mockups/CheckoutMessage/phone.html?page=shipping-methods">Shipping</a>
+        <a class="chip" href="Mockups/CheckoutMessage/phone.html?page=order-review">Review</a>
+        <a class="chip" href="Mockups/CheckoutMessage/phone.html?page=receipt">Receipt</a>
+      </div>
+    </li>
+
   </ul>
 
   <h2>Reading these</h2>
@@ -186,8 +206,10 @@
     switches examples and links to the next page, so a scenario can be followed from cart to
     receipt.
     <br><br>
-    <strong>The no-ZIP-code state is not in this round.</strong> Every page assumes a ZIP code is
-    known. What the cart shows before one is entered needs more work and comes next.
+    <strong>The cart has a no-ZIP-code state.</strong> Before a delivery destination is known
+    there is nothing true to say about shipments, so the cart is a flat list and every message is
+    withheld &mdash; the <em>ZIP</em> control on that page switches between the two. The other
+    three pages always have a destination.
     <br><br>
     <strong>Examples 2 and 3 are two shipments, not three.</strong> New York stock going to a
     local-delivery or pickup order is transferred to the delivering store with everything else

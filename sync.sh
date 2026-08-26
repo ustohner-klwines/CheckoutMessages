@@ -49,7 +49,7 @@ DS="$(cd "$SRC/../.." && pwd)"                          # design-system root
 cd "$HERE"
 
 DEST="$HERE/Mockups/CheckoutMessage"
-PROTOS=(cart-summary.html shipping-methods.html order-review.html receipt.html)
+PROTOS=(cart-summary.html shipping-methods.html order-review.html receipt.html phone.html)
 
 echo "→ source:  $SRC"
 echo "→ tokens:  $DS/KL-Design_System/tokens.css"
@@ -84,8 +84,10 @@ fi
 mkdir -p "$DEST/_shared" "$HERE/KL-Design_System"
 
 for f in "${PROTOS[@]}"; do cp "$SRC/$f" "$DEST/$f"; done
-cp "$SRC"/_shared/checkout-mock.css "$DEST/_shared/"
-cp "$SRC"/_shared/checkout-mock.js  "$DEST/_shared/"
+cp "$SRC"/_shared/checkout-mock.css        "$DEST/_shared/"
+cp "$SRC"/_shared/checkout-mock-mobile.css "$DEST/_shared/"
+cp "$SRC"/_shared/checkout-mock.js         "$DEST/_shared/"
+cp "$SRC"/_shared/checkout-sheet.js        "$DEST/_shared/"
 cp "$DS"/KL-Design_System/tokens.css "$HERE/KL-Design_System/"
 
 # cp "$SRC"/NOTES.md "$DEST/"     # ← uncomment to publish the decision record

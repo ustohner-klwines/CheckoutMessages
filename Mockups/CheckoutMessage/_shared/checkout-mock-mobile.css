@@ -1,0 +1,227 @@
+/* ============================================================================
+   CHECKOUT SHIPMENT MESSAGING — MOBILE
+   Loaded after checkout-mock.css by all four pages.
+
+   WHY A SEPARATE FILE, NOT A SEPARATE SET OF PAGES
+     Every sentence on these pages has been reviewed one at a time and signed
+     off. Duplicating the pages for mobile would duplicate all of it, and the
+     next wording change would have to be made twice — which is how two designs
+     that were once the same start to disagree. There is one source per page;
+     this file is the mobile layer over it.
+
+   BREAKPOINTS come from the app's own theme (KLWines.ReactWeb/src/theme.ts):
+       xs 320 · sm 600 · md 960 · lg 1200 · xl 1536
+   The base stylesheet is already mobile-first and stacks below 1200px, so what
+   is here is genuinely mobile-only work: 599px and below, which is what
+   `useViewport().mobile` means in the app (`isSmallerThan("sm")`).
+
+   THE BOTTOM SHEET is at the end of this file. There is exactly ONE bottom
+   sheet in the live app — see the block comment above it before adding another.
+   ============================================================================ */
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PHONE-FRAME CHROME
+   The mockup toolbar is hidden when a page is opened inside phone.html, which
+   supplies its own controls. Driven by ?chrome=off, handled in
+   checkout-mock.js — not by a media query: at 390px in a real phone browser
+   the toolbar is still wanted.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.mock-chrome-off .mock-bar { display: none; }
+
+
+@media (max-width: 599px) {
+
+  /* ── Page rhythm ───────────────────────────────────────────────────────
+     32px of air above the first heading is a desktop proportion; on a 390px
+     screen it costs a fifth of the first viewport for nothing. */
+  .page-body { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-2xl); }
+
+  .checkout-layout { gap: var(--spacing-lg); }
+
+
+  /* ── Order-level summary ───────────────────────────────────────────────
+     One line at desktop: icon · "Your order arrives in 3 shipments" ·
+     "Quantity: 11 items". At 358px of usable width the statement and the
+     figure fight over the same row and the statement loses, so the figure
+     drops below it. It stays second in the reading order either way. */
+  .order-summary-msg { align-items: flex-start; flex-wrap: wrap; }
+  .order-summary-msg__body { flex-basis: calc(100% - 40px); }
+  .order-summary-msg__qty { flex-basis: 100%; padding-left: 40px; margin-top: var(--spacing-xs); }
+
+
+  /* ── Shipment groups ───────────────────────────────────────────────────
+     48px between groups reads as "these are separate things" on a desktop
+     column; on a phone the shopper only ever sees one group at a time, so the
+     gap is spent scrolling. 32px still separates them clearly, and the rule
+     above each group is doing most of the work. */
+  .ship-groups { gap: var(--spacing-xl); }
+  .ship-group.has-divider { padding-top: var(--spacing-xl); }
+
+
+  /* ── Cart rows ─────────────────────────────────────────────────────────
+     THE STEPPER DROPS BELOW THE ITEM, and this is the one real layout change
+     on the cart.
+
+     Desktop is three columns: thumb 56 · name · stepper 100. At 390px that
+     leaves the name about 165px, and a K&L product name is long — "2019
+     Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)" takes four
+     lines in that column, and "Remove / Saved to Favorites" breaks in half
+     underneath it. The row stops being scannable, which is the one thing a
+     cart row has to be.
+
+     So the stepper moves to its own row, right-aligned under the item it
+     belongs to, and the thumb spans both rows to keep them tied together. The
+     name gets the full ~290px and settles at two lines.
+
+     No markup changes — the grid is re-described, and the DOM order (thumb,
+     body, stepper) already reads correctly to a screen reader either way. */
+  .cart-item { gap: var(--spacing-sm) var(--spacing-md); grid-template-columns: 56px minmax(0, 1fr); }
+  .cart-item__thumb { grid-row: 1 / span 2; }
+  .cart-item__body  { grid-column: 2; grid-row: 1; }
+  .cart-item__qty   { grid-column: 2; grid-row: 2; justify-self: end; }
+
+  .ship-group__items { gap: var(--spacing-md); }
+  .cart-flat .cart-item { padding: var(--spacing-md) 0; }
+
+
+  /* ── Cards and panels ──────────────────────────────────────────────────
+     24px of padding inside a card, on a page with 16px gutters, leaves the
+     card's own content narrower than the text outside it. */
+  .rail-card { padding: var(--spacing-md); }
+
+
+  /* ── Buttons ───────────────────────────────────────────────────────────
+     Any primary action on a phone is full width; a 200px button floating in a
+     390px column reads as secondary whatever its colour. */
+  .btn--primary { width: 100%; }
+  .btn--block { width: 100%; }
+
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BOTTOM SHEET
+   >>> DELIVERABLE <<<  Added 2026-08-26.
+
+   ⚠ READ THIS BEFORE USING IT ANYWHERE NEW.
+
+   The live app has exactly ONE bottom sheet, and it is on the checkout
+   shipping page: `ShipmentItemsPreview` (Checkout/Shipping/ShipmentItemsPreview.tsx).
+   Every other overlay in the app is a side flyout — auth anchors right, PLP
+   filters and mobile nav anchor left — or a centred Dialog, which is what the
+   receipt's Schedule Delivery uses. A bottom sheet is therefore not the
+   house pattern for "more detail on mobile"; it is one specific component, and
+   this stylesheet reproduces it rather than inventing a family.
+
+   The numbers below are that component's, not new ones:
+       borderTopLeftRadius / borderTopRightRadius   16
+       maxHeight                                    67vh
+       grab handle       40 × 4, radius 2, grey[300], mt 8 / mb 4, centred
+       header            title body1 600 + caption "N items", Close IconButton
+       rows              py 12, borderBottom 1px grey[300], last row none
+       row image         36 × 86
+   The one deliberate difference is scroll locking — see checkout-sheet.js.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.sheet-scrim {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0, 0, 0, .5);          /* MUI Backdrop default */
+  opacity: 0; pointer-events: none;
+  transition: opacity .22s ease;
+}
+.sheet-scrim.is-open { opacity: 1; pointer-events: auto; }
+
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 201;
+  display: flex; flex-direction: column;
+  max-height: 67vh;
+  background: var(--color-bg-page);
+  border-top-left-radius: 16px; border-top-right-radius: 16px;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, .18);
+  overflow: hidden;
+  transform: translateY(100%);
+  transition: transform .26s cubic-bezier(.4, 0, .2, 1);
+}
+.sheet.is-open { transform: translateY(0); }
+.sheet:focus { outline: none; }   /* focused on open for a11y, not to be drawn */
+/* `display: flex` above would otherwise beat the [hidden] attribute, so a
+   closed sheet would stay in the layout with only a transform hiding it. */
+.sheet[hidden] { display: none; }
+
+/* Grab handle. Decorative — the sheet is not drag-dismissable in the live
+   component either (MUI Drawer, not SwipeableDrawer), so it signals "this
+   panel is temporary" and nothing more. */
+.sheet__handle {
+  width: 40px; height: 4px; border-radius: 2px;
+  margin: var(--spacing-sm) auto var(--spacing-xs);
+  background: var(--color-grey-border);   /* = grey[300] in the live component */
+  flex-shrink: 0;
+}
+
+.sheet__head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: 0 var(--spacing-md) var(--spacing-xs);
+  flex-shrink: 0;
+}
+.sheet__title {
+  font-size: var(--font-size-body1); line-height: var(--line-height-body1);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+}
+.sheet__count {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary);
+  display: block; margin-top: 2px;
+}
+.sheet__close {
+  flex-shrink: 0; width: 40px; height: 40px; margin: -8px -8px 0 0;
+  border: none; background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; color: var(--color-text-primary);
+}
+.sheet__close:hover { background: var(--color-bg-subtle); }
+.sheet__close svg { width: 24px; height: 24px; fill: currentColor; }
+
+.sheet__body { padding: 0 var(--spacing-md) var(--spacing-md); overflow-y: auto; }
+
+/* Rows inside the sheet. Not .cart-item: there are no quantity steppers here —
+   the sheet answers "what is in this shipment", and the cart is where
+   quantities change. */
+.sheet-row {
+  display: flex; align-items: center; gap: var(--spacing-md);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-grey-border);
+}
+.sheet-row:last-child { border-bottom: none; }
+.sheet-row__thumb {
+  width: 36px; height: 86px; flex-shrink: 0;
+  background: var(--color-bg-subtle); border-radius: var(--card-border-radius);
+  display: flex; align-items: center; justify-content: center;
+}
+.sheet-row__thumb svg { width: 22px; height: 60px; }
+.sheet-row__body { min-width: 0; flex: 1; }
+.sheet-row__name {
+  font-size: var(--font-size-body2); line-height: var(--line-height-body2);
+  font-weight: var(--font-weight-bold); color: var(--color-text-primary);
+}
+.sheet-row__sub {
+  font-size: var(--font-size-caption); line-height: var(--line-height-caption);
+  color: var(--color-text-secondary); margin-top: 2px;
+}
+
+/* The trigger. In the live component the shipment's availability message IS
+   the button — underlined body2 in text.secondary — which is why our shipment
+   message needs no separate "view items" link on mobile. See NOTES.md §21. */
+.sheet-trigger {
+  font: inherit; text-align: left; padding: 0; border: none; background: none;
+  cursor: pointer; color: inherit;
+}
+.sheet-trigger .sheet-trigger__label { text-decoration: underline; }
+
+/* Desktop keeps the items inline, so the trigger is not shown and the sheet
+   can never open. Mirrors `{mobile && open && <Drawer …>}`. */
+@media (min-width: 600px) {
+  .sheet, .sheet-scrim { display: none !important; }
+}

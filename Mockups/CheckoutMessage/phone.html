@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K&L — Checkout Messaging (Mobile)</title>
+
+<!--
+  ============================================================================
+  PHONE FRAME — mockup chrome, not part of the design
+  ============================================================================
+
+  WHY THIS EXISTS
+    The four pages are one source each, mobile-first, with a real
+    `@media (max-width: 599px)` layer in _shared/checkout-mock-mobile.css.
+    That is the right way to build them — but it means the mobile design only
+    appears if you resize your browser, and stakeholders review these in a
+    desktop window.
+
+    So this frames the real page in an iframe at 390 x 844. The media queries
+    fire because the iframe genuinely is 390px wide. Nothing is duplicated:
+    what you see here is the same file that renders on desktop, and any wording
+    change lands in both at once.
+
+    390 x 844 is an iPhone 14/15 viewport — the most common size in the K&L
+    analytics, and comfortably below the app's `sm` breakpoint (600), which is
+    where `useViewport().mobile` turns on and the bottom sheet appears.
+
+  THE FRAMED PAGE gets ?chrome=off, which hides its own mockup toolbar; the
+  controls up here drive it instead by reloading with the right query string.
+  ============================================================================
+-->
+
+<link rel="stylesheet" href="../../KL-Design_System/tokens.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-family-roboto);
+    background: #1B1D1F;
+    color: #F3F3F3;
+    min-height: 100vh;
+  }
+
+  /* ── Controls ─────────────────────────────────────────────────────────── */
+  .bar {
+    position: sticky; top: 0; z-index: 10;
+    background: #1B1D1F;
+    padding: 10px 16px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px;
+    font-size: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+  .bar__brand { font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .55; }
+  .bar__group { display: flex; align-items: center; gap: 6px; }
+  .bar__label { opacity: .5; text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+  .bar button {
+    font: inherit; font-size: 12px; cursor: pointer;
+    background: #2E3134; color: #D8D8D8; border: 1px solid #43474B;
+    border-radius: 3px; padding: 5px 10px;
+  }
+  .bar button:hover { background: #3A3E42; }
+  .bar button[aria-pressed="true"] { background: #F3F3F3; color: #1B1D1F; border-color: #F3F3F3; font-weight: 700; }
+  .bar__spacer { flex: 1; }
+  .bar__link { color: #9BA0A5; text-decoration: none; font-size: 11px; border-bottom: 1px dotted #5A5F64; }
+  .bar__link:hover { color: #F3F3F3; }
+
+  /* ── Device ───────────────────────────────────────────────────────────── */
+  .stage { padding: 32px 16px 64px; display: flex; justify-content: center; }
+
+  .device {
+    width: 390px; flex-shrink: 0;
+  }
+  .device__screen {
+    width: 390px; height: 844px;
+    background: #FFF;
+    border: 10px solid #0E1011;
+    border-radius: 40px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.5);
+    overflow: hidden;
+    position: relative;
+  }
+  .device__screen iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .device__caption {
+    margin-top: 12px; text-align: center;
+    font-size: 11px; color: #9BA0A5; letter-spacing: .04em;
+  }
+  .device__caption strong { color: #F3F3F3; font-weight: 700; }
+
+  /* Two frames side by side on a wide screen — the state comparison this
+     project keeps needing (ZIP / no ZIP, Picking / Ready). */
+  .stage--pair { gap: 40px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .device, .device__screen { width: 100%; max-width: 390px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <span class="bar__brand">Mobile preview</span>
+
+  <span class="bar__group">
+    <span class="bar__label">Page</span>
+    <button data-ctl="page" data-val="cart-summary">Cart</button>
+    <button data-ctl="page" data-val="shipping-methods">Shipping</button>
+    <button data-ctl="page" data-val="order-review">Review</button>
+    <button data-ctl="page" data-val="receipt">Receipt</button>
+  </span>
+
+  <span class="bar__group">
+    <span class="bar__label">Example</span>
+    <button data-ctl="fulfilment" data-val="shipping">1 Shipping</button>
+    <button data-ctl="fulfilment" data-val="delivery">2 Delivery</button>
+    <button data-ctl="fulfilment" data-val="pickup">3 Pickup</button>
+    <button data-ctl="fulfilment" data-val="rsonly">4 RS only</button>
+  </span>
+
+  <span class="bar__group" data-only="cart-summary">
+    <span class="bar__label">ZIP</span>
+    <button data-ctl="zip" data-val="yes">Set</button>
+    <button data-ctl="zip" data-val="no">None</button>
+  </span>
+
+  <span class="bar__group" data-only="receipt">
+    <span class="bar__label">Status</span>
+    <button data-ctl="status" data-val="picking">Picking</button>
+    <button data-ctl="status" data-val="ready">Ready</button>
+  </span>
+
+  <span class="bar__spacer"></span>
+  <a class="bar__link" id="open-direct" href="cart-summary.html" target="_blank">Open full size &nearr;</a>
+</div>
+
+<div class="stage">
+  <div class="device">
+    <div class="device__screen">
+      <iframe id="screen" title="Mobile preview" src="about:blank"></iframe>
+    </div>
+    <div class="device__caption">390 &times; 844 &mdash; <strong id="caption">Cart</strong></div>
+  </div>
+</div>
+
+<script>
+  /* Which query keys each page actually understands. Sending `zip` to the
+     receipt would be harmless — checkout-mock.js ignores unknown keys — but the
+     controls are hidden for the same reason the pages ignore them: a control
+     that does nothing is worse than no control. */
+  var PAGES = {
+    "cart-summary":     { label: "Cart",     keys: ["fulfilment", "zip"] },
+    "shipping-methods": { label: "Shipping", keys: ["fulfilment"] },
+    "order-review":     { label: "Review",   keys: ["fulfilment"] },
+    "receipt":          { label: "Receipt",  keys: ["fulfilment", "status"] }
+  };
+
+  var state = {
+    page:       "cart-summary",
+    fulfilment: "shipping",
+    zip:        "yes",
+    status:     "picking"
+  };
+
+  function url() {
+    var page = PAGES[state.page];
+    var qs = ["chrome=off"];
+    page.keys.forEach(function (k) { qs.push(k + "=" + state[k]); });
+    return state.page + ".html?" + qs.join("&");
+  }
+
+  function render() {
+    var href = url();
+    document.getElementById("screen").src = href;
+    document.getElementById("open-direct").href = href.replace("chrome=off&", "").replace("?chrome=off", "");
+    document.getElementById("caption").textContent = PAGES[state.page].label;
+
+    document.querySelectorAll("[data-ctl]").forEach(function (btn) {
+      var on = state[btn.getAttribute("data-ctl")] === btn.getAttribute("data-val");
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+
+    /* Page-specific control groups. */
+    document.querySelectorAll("[data-only]").forEach(function (group) {
+      group.style.display = group.getAttribute("data-only") === state.page ? "" : "none";
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-ctl]");
+    if (!btn) return;
+    state[btn.getAttribute("data-ctl")] = btn.getAttribute("data-val");
+    render();
+  });
+
+  /* Deep-linkable: phone.html?page=receipt&fulfilment=pickup&status=ready */
+  new URLSearchParams(location.search).forEach(function (v, k) {
+    if (k in state) state[k] = v;
+  });
+
+  render();
+</script>
+
+</body>
+</html>
