@@ -622,7 +622,7 @@
           <!-- One origin, so no sub-groups: the shipment's own sentence opens the list. -->
           <details class="items-disclose">
             <summary data-design-token="typography.variants.body2 colors.text.primary">
-              <span class="items-disclose__label">Item(s) below leave our warehouse in <strong>1&ndash;2 days</strong>. Transit time depends on your address</span>
+              <span class="items-disclose__label">Items below leave our warehouse in <strong>1&ndash;2 days</strong>. Transit time depends on your address.</span>
               <span class="flag flag--changed">Reworded</span>
             </summary>
             <div class="item-preview">
@@ -747,11 +747,13 @@
                pickup wording. Deleted rather than left dormant because the copy is live,
                just somewhere else. -->
 
-          <!-- Wording is the one specified earlier ("Items below…", not "Item(s) below…"),
-               kept verbatim; only the disclosure is new. -->
+          <!-- REWORDED 2026-08-26 to the agreed M2.3 sentence — see MESSAGES.md. It replaced
+               "Items below will transfer to RareStorage, leaving the New York warehouse in
+               1-2 days": the destination is already in the heading, and a movement verb would
+               claim a move that may not happen when the stock is already at the facility. -->
           <details class="items-disclose">
             <summary data-design-token="typography.variants.body2 colors.text.primary">
-              <span class="items-disclose__label">Items below will transfer to RareStorage, leaving the New York warehouse in <strong>1&ndash;2 days</strong>.</span>
+              <span class="items-disclose__label">Item(s) below come from New York and will be ready in <strong>1&ndash;2 days</strong>.</span>
             </summary>
             <div class="item-preview">
               <div class="item-preview__row">
@@ -843,13 +845,14 @@
             <span class="flag flag--new">New</span>
           </p>
 
-          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
-            Items below will transfer to RareStorage
-          </p>
+          <!-- REMOVED 2026-08-26 — the shipment-level "Items below will transfer to
+               RareStorage". It existed only to introduce the two source sub-groups, and once
+               those lines dropped the destination clause it had no job left: the group heading
+               above already says "Transfer to RareStorage". See MESSAGES.md M2.3. -->
 
           <details class="items-disclose">
             <summary data-design-token="typography.variants.body2 colors.text.primary">
-              <span class="items-disclose__label">Item(s) below will transfer to RareStorage, leaving the New York warehouse in <strong>1&ndash;2 days</strong>.</span>
+              <span class="items-disclose__label">Item(s) below come from New York and will be ready in <strong>1&ndash;2 days</strong>.</span>
             </summary>
             <div class="item-preview">
               <div class="item-preview__row">
@@ -873,7 +876,7 @@
 
           <details class="items-disclose">
             <summary data-design-token="typography.variants.body2 colors.text.primary">
-              <span class="items-disclose__label">Item(s) below will transfer to RareStorage, leaving the Northern California warehouse in <strong>3&ndash;4 days</strong>.</span>
+              <span class="items-disclose__label">Item(s) below come from Northern California and will be ready in <strong>3&ndash;4 days</strong>.</span>
             </summary>
             <div class="item-preview">
               <div class="item-preview__row">
