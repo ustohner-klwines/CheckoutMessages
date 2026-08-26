@@ -846,7 +846,69 @@
             No shipping charges until the items are ready to ship
           </p>          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
             We&rsquo;ll contact you to arrange shipping or pickup for the item(s) below
-          </p>          <div class="ship-group__items">
+          </p>
+          <!-- ═══ PRE-ARRIVAL SHIPPING PREFERENCE — EXAMPLES 3 AND 4 ONLY ═══
+               NEW 2026-08-26. Shown when the shopper is already collecting (pickup) or
+               cannot receive a carrier shipment at all (RS-only address). In both cases
+               the only sensible pre-arrival destinations are a pickup counter or
+               RareStorage, so the choice is worth making now rather than in two months.
+               NOT shown on Examples 1 and 2: a shipping or local-delivery shopper can
+               still take the wine any of several ways, and the subheader's promise to
+               contact them is the honest answer there.
+
+               ⚠ SCOPE. This writes `shopper.PreferredShipWayCD` — one value per ACCOUNT,
+               not per order (ShopperRepository.cs:1622). It is the same field the Account
+               → Shipping Preferences page edits, so the caption below has to say so;
+               "set your preference for pre-arrival items" alone would read as
+               order-scoped and it is not.
+
+               ⚠ OPTION LABELS are `ShipWays.Description` verbatim, straight from the DB
+               (ShipwayRepository.cs:189). They are shown here as they really are — which
+               is why they break the naming this spec settled ("Pickup at RareStorage
+               Redwood City", bare "RareStorage", and the internal "Hold (by RS)").
+               See MESSAGES.md M3.3. -->
+          <div class="callout" data-when="fulfilment:pickup|rsonly" style="margin-bottom: var(--spacing-lg);" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding" data-mui-component="PreArrivalPreferenceBox">
+            <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+              To make it easier, set your shipping preference for pre-arrival items
+              <span class="flag flag--proposed">New</span>
+            </div>
+            <div class="field" style="max-width: 360px; margin-bottom: var(--spacing-sm);">
+              <label class="field__label" for="pa-pref" data-design-token="typography.variants.subtitle2 colors.text.secondary">Ship To</label>
+              <!-- PICKUP: already filled in. Choosing a pickup location during checkout
+                   writes that location into this very field
+                   (ShippingPreferencesController.cs:186), so by the time the receipt
+                   renders the preference is set and the control is a confirmation. -->
+              <select class="field__input" id="pa-pref" data-when="fulfilment:pickup" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="Select size=small">
+              <option selected>Pickup at RareStorage Redwood City</option>
+              <option>Pickup at RareStorage San Francisco</option>
+              <option>Pickup at RareStorage Hollywood</option>
+              <option>Pickup at RareStorage Culver City</option>
+              <option>RareStorage</option>
+              <option>Hold (by RS)</option>
+              <option>Pickup at RareStorage New York</option>
+              </select>
+              <!-- RS-ONLY ADDRESS: nothing has been written, because no pickup location
+                   was chosen. This is the empty state, and the state where the control
+                   earns its place. The live list's first entry is genuinely blank; a
+                   blank row reads as a bug, so it carries the meaning of leaving it
+                   blank instead — ⚠ proposed copy, see MESSAGES.md M3.3. -->
+              <select class="field__input" data-when="fulfilment:rsonly" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="Select size=small">
+                <option value="" selected>No preference &mdash; we&rsquo;ll contact you</option>
+              <option>Pickup at RareStorage Redwood City</option>
+              <option>Pickup at RareStorage San Francisco</option>
+              <option>Pickup at RareStorage Hollywood</option>
+              <option>Pickup at RareStorage Culver City</option>
+              <option>RareStorage</option>
+              <option>Hold (by RS)</option>
+              <option>Pickup at RareStorage New York</option>
+              </select>
+            </div>
+            <p class="t-caption" style="margin: 0;" data-design-token="typography.variants.caption colors.text.secondary">
+              This becomes the default for every pre-arrival order on your account. You can change
+              it any time in My Account &rarr; Shipping Preferences.
+            </p>
+          </div>
+          <div class="ship-group__items">
             <div class="cart-item" data-unless="fulfilment:rsonly" data-design-token="spacing.md spacing.lg">
               <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
                 <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="2" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="18" width="14" height="40" rx="3" fill="#4E342E"/><rect x="4" y="30" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
