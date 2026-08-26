@@ -1048,7 +1048,15 @@
           collection. Allow 1&ndash;2 business days for processing.
           <span class="flag flag--proposed">Copy TBC</span>
         </p>
-        <p class="t-caption" style="margin-bottom: var(--spacing-sm);" data-design-token="typography.variants.caption colors.text.secondary">
+        <!-- SCOPED 2026-08-26 — was unconditional, so it stated "first 60 days of storage
+             free" on pickup and local delivery, where nothing enters storage (NOTES.md §18).
+             It now shows only where storage is real: a shipping address, or an RS-only state.
+
+             Example 2 loses it even though the storage OPTION is on this page — the full
+             legal panel appears in the main column if the shopper takes that option, and it
+             is the reviewed copy. A rail line promising free storage beside an option the
+             shopper has not taken states the terms of a decision not yet made. -->
+        <p class="t-caption" style="margin-bottom: var(--spacing-sm);" data-when="fulfilment:shipping|rsonly" data-design-token="typography.variants.caption colors.text.secondary">
           <strong>RareStorage:</strong> temperature-controlled facilities, first 60 days of
           storage free. Not suitable for expedited delivery or gift options.
           <span class="t-link">RareStorage.com</span>
