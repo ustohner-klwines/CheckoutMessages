@@ -268,9 +268,14 @@
 
         <!-- ═══════════ SHIPMENT 1 (EXAMPLE 2) — LOCAL DELIVERY ═══════════
              The shipment the checkout page made a promise about: "You can select
-             delivery options on the receipt page". The control is the panel in the
-             rail; this shipment's status note points at it, because a status of
-             "Not scheduled" that does not say where to go is a dead end. -->
+             delivery options on the receipt page". The control is the panel in the rail.
+
+             The status note used to point at that panel — "Choose a date in the Local
+             Delivery panel" — on the reasoning that "Not scheduled" without a destination
+             is a dead end. Dropped 2026-08-26: the rail panel already says "Please schedule
+             your delivery date and time" above a prominent button, so the wayfinding was
+             the page's third telling. What no button can express is the CONSEQUENCE of
+             ignoring it, and that is all the note now carries. -->
         <section class="ship-group" data-group="ld" data-when="fulfilment:delivery">
           <div class="receipt-head">
             <div class="receipt-head__meta">
@@ -294,7 +299,7 @@
               <div class="receipt-status__label" data-design-token="typography.variants.caption colors.text.secondary">Status</div>
               <span class="status-chip" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Not scheduled</span>
               <div class="receipt-status__note" data-design-token="typography.variants.caption colors.text.secondary">
-                Choose a date in the Local Delivery panel &mdash; nothing is delivered until you do.
+                Nothing is delivered until you choose a date.
                 <span class="flag flag--changed">Reworded</span>
               </div>
             </div>
