@@ -86,6 +86,16 @@
     <button data-ctl="fulfilment" data-val="rsonly">Example 4: RS only address</button>
   </span>
 
+  <!-- Pickup readiness. The receipt is the one page a shopper returns to: at checkout the
+       order is never ready, and the state that matters most — the one where they are in the
+       car park — happens on a later visit. The live component already branches on
+       IsPickupReady; this control shows both sides of that branch. -->
+  <span class="mock-bar__group" data-when="fulfilment:pickup">
+    <span class="mock-bar__label">Pickup status</span>
+    <button data-ctl="pickupready" data-val="no">Not ready</button>
+    <button data-ctl="pickupready" data-val="yes">Ready</button>
+  </span>
+
   <span class="mock-bar__spacer"></span>
   <a class="mock-bar__page" href="cart-summary.html">Cart</a>
   <a class="mock-bar__page" href="shipping-methods.html">Shipping</a>
@@ -447,7 +457,11 @@
             </div>
             <div class="receipt-status">
               <div class="receipt-status__label" data-design-token="typography.variants.caption colors.text.secondary">Status</div>
-              <span class="status-chip" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Picking</span>
+              <!-- The copy in the curbside box names this status ("activates once your order
+                   is Ready"), so the chip has to be able to show it. Picking while staff
+                   gather the order, Ready once it can be collected. -->
+              <span class="status-chip" data-when="pickupready:no" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Picking</span>
+              <span class="status-chip" data-when="pickupready:yes" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Ready</span>
             </div>
           </div>          <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
             Collect from RareStorage Redwood City
@@ -461,7 +475,7 @@
                the disabled button are the live ones; only the surface is the palette's
                background.subtle rather than grey[100]. -->
           <div class="callout" style="margin-bottom: var(--spacing-lg);" data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding" data-mui-component="CurbsidePickupBox">
-            <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+            <div class="callout__title" data-when="pickupready:no" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
               Don&rsquo;t head over just yet!
             </div>
             <!-- REWORDED 2026-08-26, and this corrects a factual error in the LIVE copy, not
@@ -474,11 +488,21 @@
 
                  Also split into one fact per sentence: the nested conditional was what made
                  the original bulky. See MESSAGES.md, receipt section. -->
-            <p class="callout__text" data-design-token="typography.variants.body2 colors.text.primary">
+            <p class="callout__text" data-when="pickupready:no" data-design-token="typography.variants.body2 colors.text.primary">
               We&rsquo;ll email you once your items are ready. For curbside pickup, the button
               below activates once your order is Ready. Click it when you are parked at our store.
             </p>
-            <button class="btn btn--primary" disabled data-design-token="colors.cta.primary colors.text.onDark" data-mui-component="Button variant=contained disabled">
+            <!-- READY STATE. Both facts above have already happened — the email went out and
+                 the button is live — so restating them describes the shopper's past. All that
+                 is left is the action, and "the button below" replaces "it" because the
+                 sentence now stands alone. Shortest copy in the state where they are acting. -->
+            <p class="callout__text" data-when="pickupready:yes" data-design-token="typography.variants.body2 colors.text.primary">
+              Click the button below when you are parked at our store.
+            </p>
+            <button class="btn btn--primary" disabled data-when="pickupready:no" data-design-token="colors.cta.primary colors.text.onDark" data-mui-component="Button variant=contained disabled">
+              I&rsquo;m parked and ready for pickup
+            </button>
+            <button class="btn btn--primary" data-when="pickupready:yes" data-design-token="colors.cta.primary colors.text.onDark" data-mui-component="Button variant=contained">
               I&rsquo;m parked and ready for pickup
             </button>
             <p class="t-caption" style="margin-top: var(--spacing-sm); margin-bottom: 0;" data-design-token="typography.variants.caption colors.text.secondary">
@@ -1084,7 +1108,7 @@
 
      `composition` and `zip` are not used: the basket is settled and the order is
      placed. Only the Example switch matters. */
-  KLMock.init({ fulfilment: "shipping" });
+  KLMock.init({ fulfilment: "shipping", pickupready: "no" });
   KLMock.render();
 </script>
 </body>
