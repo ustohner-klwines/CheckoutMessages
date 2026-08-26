@@ -472,7 +472,7 @@
             </span>
             <div class="ship-group__title-row">
               <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
-                Pickup from RareStorage Redwood City
+                Pickup
                 <span class="flag flag--new">New</span>
               </h2>
               <!-- Per-shipment quantity — restored 2026-08-21. The order-level line still
@@ -486,7 +486,7 @@
           </div>
 
           <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
-            Items below will be transferred to RareStorage Redwood City for Pickup
+            Items below will be transferred to RareStorage Redwood City
           </p>
           <!-- 2026-08-26 — "60 day complimentary storage." was taken off the front of
                this sentence; what is left is the part that is true of a pickup order.
@@ -494,14 +494,15 @@
                enter storage, so there is no complimentary period, no day 61 and no fee to
                state. The facility naming above stays — it is required — but
                nothing about storage follows it now. See NOTES.md §18. -->
-          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
-            Items can be picked up once available.
-            <span class="flag flag--new">New</span>
-          </p>
+          <!-- REMOVED 2026-08-26 — "Items can be picked up once available."
+               More confusing than helpful (product): with the source sub-groups showing
+               1-2, 2 and 28 days, "once available" reads as an invitation to collect in
+               parts, which is exactly what Q1 has not answered. Nothing replaces it yet —
+               see MESSAGES.md M5, where the live template's email promise is the candidate. -->
 
           <details class="items-disclose">
             <summary data-design-token="typography.variants.body2 colors.text.primary">
-              <span class="items-disclose__label">Item(s) below are in RareStorage Redwood City. Available for pickup in <strong>1&ndash;2 days</strong></span>
+              <span class="items-disclose__label">Item(s) below come from Redwood City and will be ready in <strong>1&ndash;2 days</strong></span>
             </summary>
             <div class="item-preview">
               <div class="item-preview__row">
@@ -522,7 +523,7 @@
                bottles they apply to — same structure as Example 2. -->
           <details class="items-disclose">
             <summary data-design-token="typography.variants.body2 colors.text.primary">
-              <span class="items-disclose__label">Item(s) below are transferring from RareStorage San Francisco. Available for pickup in <strong>2 days</strong></span>
+              <span class="items-disclose__label">Item(s) below come from San Francisco and will be ready in <strong>2 days</strong></span>
             </summary>
             <div class="item-preview">
               <div class="item-preview__row">
@@ -555,7 +556,7 @@
                No storage terms: nothing enters a storage account. -->
           <details class="items-disclose">
             <summary data-design-token="typography.variants.body2 colors.text.primary">
-              <span class="items-disclose__label">Item(s) below are transferring from RareStorage New York. Available for pickup in <strong>28 days</strong></span>
+              <span class="items-disclose__label">Item(s) below come from New York and will be ready in <strong>28 days</strong></span>
               <span class="flag flag--new">New</span>
             </summary>
             <div class="item-preview">
