@@ -334,11 +334,30 @@
             </div>
             <div class="receipt-status">
               <div class="receipt-status__label" data-design-token="typography.variants.caption colors.text.secondary">Status</div>
+              <!-- NO NOTE, 2026-08-27. It read "Nothing is delivered until you choose a
+                   date." Removed rather than softened, because the problem was its JOB, not
+                   its tone.
+
+                   A note under a chip exists to add what the chip cannot say. Look at what
+                   the others add: under Picking, "we will email you"; under Ready, "Track
+                   your shipment"; on both RareStorage transfers, "we'll email you once the
+                   item(s) arrive". Four notes, each either a promise we keep or an action
+                   available now. This one was the only sentence on the page describing what
+                   would NOT happen to the shopper's wine unless they acted — and that
+                   stance, not the word choice, is what made it read as a warning. There is
+                   no honest "we will" version, because until they pick a date we do
+                   nothing.
+
+                   It was also the third statement of one fact: the chip says "Not
+                   scheduled", the rail card says "Please schedule your delivery date and
+                   time" above a red button, and this said it again in the quietest voice
+                   40px from the loudest one. Removing it leaves the button as the only
+                   thing asking for the click.
+
+                   Pickup has never had a note, and pre-arrival lost its on the same day for
+                   the same reason (§23) — two shipments with nothing to add is a pattern,
+                   not an omission. See MESSAGES.md R4. -->
               <span class="status-chip" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Not scheduled</span>
-              <div class="receipt-status__note" data-design-token="typography.variants.caption colors.text.secondary">
-                Nothing is delivered until you choose a date.
-                <span class="flag flag--changed">Reworded</span>
-              </div>
             </div>
           </div>          <p class="ship-group__msg ship-group__msg--tight" data-design-token="typography.variants.body2 colors.text.primary">
             Local delivery to your address from RareStorage Redwood City
