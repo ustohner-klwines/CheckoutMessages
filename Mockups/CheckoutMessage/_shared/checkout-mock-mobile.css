@@ -76,6 +76,13 @@
      and only the gutter tightens, which buys the name back about 16px. */
   .cart-item { gap: var(--spacing-sm); }
 
+  /* "Remove · ♥ · Saved to Favorites" needs about 191px at the 16px gutter and
+     the body column has 186px once the thumb and the stepper are paid for — so
+     the saved label broke over two lines while the shorter unsaved one did not.
+     8px between the two actions buys the 5px back; they are still clearly two
+     separate links, and the heart's own 6px gap keeps it with its label. */
+  .cart-item__actions { gap: var(--spacing-sm); }
+
   .ship-group__items { gap: var(--spacing-md); }
   .cart-flat .cart-item { padding: var(--spacing-md) 0; }
 

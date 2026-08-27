@@ -479,11 +479,34 @@ body {
   font-size: var(--font-size-body1); line-height: var(--line-height-body1);
   color: var(--color-text-primary); margin-top: var(--spacing-xs);
 }
-.cart-item__actions { display: flex; gap: var(--spacing-md); margin-top: var(--spacing-sm); }
+.cart-item__actions { display: flex; align-items: center; gap: var(--spacing-md); margin-top: var(--spacing-sm); }
 .cart-item__action {
   font-size: var(--font-size-caption); color: var(--color-text-primary);
   text-decoration: underline; cursor: pointer;
 }
+
+/* ── Favourites, with its heart ────────────────────────────────────────────
+   The live cart puts a heart between "Remove" and the favourites link, and it
+   carries the state: OUTLINE + "Save to Favorites" when the wine is not saved,
+   FILLED BURGUNDY + "Saved to Favorites" when it is. Reproduced 2026-08-27.
+
+   That also settles a wording inconsistency in this mockup rather than papering
+   over it. The grouped view said "Saved to Favorites" on every row and the flat
+   list said "Save to Favorites" — read as a typo, but they are the two states,
+   and the heart is what makes the difference visible. A cart in which every
+   bottle is already a favourite is not a state worth designing for, so the
+   default here is NOT saved, with the first row of each shipment saved so both
+   states are on screen together.
+
+   The heart is not underlined: the underline belongs to the text, which is the
+   link. Filled burgundy is the only place brand.burgundy appears on a cart row,
+   and it is doing what an accent should — marking one item as different. */
+.cart-item__fav { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.cart-item__heart {
+  width: 16px; height: 16px; flex-shrink: 0;
+  fill: var(--color-grey-muted);
+}
+.cart-item__fav--on .cart-item__heart { fill: var(--color-brand-burgundy); }
 
 .cart-item__qty { display: flex; flex-direction: column; align-items: flex-end; gap: var(--spacing-sm); }
 
