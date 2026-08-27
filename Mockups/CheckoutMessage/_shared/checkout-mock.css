@@ -841,7 +841,14 @@ select.field__input { height: var(--input-height); cursor: pointer; }
    only surface-variation token in colors.md. The live page uses a cream fill
    that is not in the palette. */
 .rs-panel { margin-top: var(--spacing-md); }
-.ship-group.is-locked .rs-panel { display: none; }
+
+/* A LOCKED shipment hides its OPT-IN panel — that panel belongs to a choice
+   whose turn has not come. It must NOT hide the unconditional one
+   (`data-rs-panel="fixed"`), added to Shipment 2 on 2026-08-26: those terms are
+   not a step to complete, they are what happens to New York stock whatever the
+   shopper picks for Shipment 1. Gating them behind an unrelated choice would
+   reproduce the live defect this change exists to fix (NOTES.md §14, §22). */
+.ship-group.is-locked .rs-panel:not([data-rs-panel="fixed"]) { display: none; }
 .rs-panel .callout__text + .callout__list { margin-top: var(--spacing-sm); }
 
 /* .prearrival-note removed. Pre-arrival's sentences are now plain

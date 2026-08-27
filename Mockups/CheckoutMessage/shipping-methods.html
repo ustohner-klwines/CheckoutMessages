@@ -794,19 +794,60 @@
                charge comes later, from RareStorage. -->
 
           <!-- >>> DELIVERABLE — NOTHING TO CHOOSE, SO NOTHING TO CLICK <<<
-               No radio, no chosen-method summary, no Edit pencil, no explainer
-               card. RareStorage is what happens to New York stock; the heading,
-               the fee beside it and the two sentences above say so completely.
+               No radio, no chosen-method summary, no Edit pencil. RareStorage is
+               what happens to New York stock; the heading, the fee beside it and
+               the two sentences above say so completely.
 
                What was removed and why:
                  · single radio  — a control with one option is a false choice,
                                    and it gate-kept shipment 3 behind a click
                                    whose outcome was already decided
                  · chosen + Edit — nothing to edit back to
-                 · explainer card — answered a question the shopper cannot act on
 
-               The full explainer panel is still on Shipment 1, where choosing
-               RareStorage IS a decision and the detail earns its place. -->
+               The explainer card is NOT in that list any more — see below. -->
+
+          <!-- >>> DELIVERABLE — RARESTORAGE EXPLAINER, ALSO HERE <<<
+               ADDED 2026-08-26, at product's request: "the case where common
+               carrier and RareStorage both appear — show the RareStorage text,
+               as you do on the RareStorage-only page."
+
+               This REVERSES an earlier call. The card used to be left off this
+               shipment on the grounds that it "answered a question the shopper
+               cannot act on" — and that reasoning had it exactly backwards. A
+               shopper who cannot act is the one who most needs the terms:
+               four bottles enter a third party's storage, a 60-day clock starts,
+               and a per-bottle fee begins after it, whatever they chose for
+               Shipment 1. Not being able to decline is not a reason to be told
+               less. It is also the live defect recorded in NOTES.md §14 — pick
+               FedEx on the live page and the terms never appear at all.
+
+               Same verbatim legal-reviewed copy and the same surface as Example
+               4's, so there is one wording of these terms and not two.
+
+               ⚠ ONE SENTENCE DOES NOT FIT AND IS SHOWN UNCHANGED ANYWAY:
+               "This option is intended for customers who wish to store and
+               manage their collection." Here it is NOT an option — the transfer
+               happens because the stock is in New York. The copy is
+               legal-reviewed, so it is reproduced as it stands rather than
+               quietly edited; flagged for a decision in MESSAGES.md M2.2. -->
+          <div class="callout rs-panel" data-rs-panel="fixed" data-second data-design-token="colors.background.subtle colors.grey.border components.card.borderRadius components.card.padding">
+            <div class="callout__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary">
+              Transfer to RareStorage
+              <span class="flag flag--new">New</span>
+            </div>
+            <p class="callout__text" data-design-token="typography.variants.body2 colors.text.primary">
+              Your order will be transferred to RareStorage, our independent storage partner,
+              after K&amp;L processes the sale. This option is intended for customers who wish
+              to store and manage their collection.
+              <span class="flag flag--proposed">Wording flagged</span>
+            </p>
+            <ul class="callout__list" data-design-token="typography.variants.body2 colors.text.primary">
+              <li>Purchases are stored in secure, temperature-controlled facilities operated by RareStorage</li>
+              <li>After checkout, you will receive an email with instructions to access and manage your collection in your RareStorage Vault</li>
+              <li>From your Vault, you may request storage or initiate shipment of your property directly through RareStorage under their terms and policies</li>
+              <li>Storage: 60 days complimentary. After 60 days, $0.40 per bottle per month ($9.50 minimum). See <span class="t-link">RareStorage.com</span> for full details</li>
+            </ul>
+          </div>
 
         </section>
 
@@ -1156,11 +1197,19 @@
     });
 
     /* Shipment 1's RareStorage panel is opt-in — only when that option is picked.
-       There is one per Example (carriers / local delivery), so toggle them all.
-       Shipment 2 no longer has a panel at all. */
+       There is one per Example (carriers / local delivery), so toggle them all. */
+    var optedIn = chosen[0] === "Stored with RareStorage";
     Array.prototype.forEach.call(document.querySelectorAll('[data-rs-panel="0"]'), function (p) {
-      p.classList.toggle("is-hidden", chosen[0] !== "Stored with RareStorage");
+      p.classList.toggle("is-hidden", !optedIn);
     });
+
+    /* Shipment 2 carries the same panel unconditionally (added 2026-08-26), so
+       opting Shipment 1 in as well would print the legal terms TWICE on one page.
+       When both would show, the opt-in copy wins: it is attached to the decision
+       the shopper just made, and it sits higher up the page. The terms are
+       identical, so nothing is lost by dropping the second instance. */
+    var fixed = document.querySelector('[data-rs-panel="fixed"][data-second]');
+    if (fixed) fixed.classList.toggle("is-hidden", optedIn);
 
     /* Example 2's collapsed state states the fee, not the method name. Which fee
        depends on which of the two options was taken — diverting the shipment into

@@ -61,26 +61,20 @@
 
 
   /* ── Cart rows ─────────────────────────────────────────────────────────
-     THE STEPPER DROPS BELOW THE ITEM, and this is the one real layout change
-     on the cart.
+     THE STEPPER STAYS BESIDE THE TITLE, level with the first line of the
+     product name. Product, 2026-08-26, against the live cart: that is where a
+     shopper reaches for it, and moving it under the item put a control below
+     the price and the Remove/Favorites row, which reads as belonging to
+     neither.
 
-     Desktop is three columns: thumb 56 · name · stepper 100. At 390px that
-     leaves the name about 165px, and a K&L product name is long — "2019
-     Twelfth Labour Napa Valley Cabernet Sauvignon (Previously $30)" takes four
-     lines in that column, and "Remove / Saved to Favorites" breaks in half
-     underneath it. The row stops being scannable, which is the one thing a
-     cart row has to be.
+     An earlier build dropped it to its own row to buy the name column width.
+     That was the wrong trade: a name wrapping to four lines is a legibility
+     cost inside one row, while a stepper in an unexpected place is a cost
+     every time the shopper wants to change a quantity.
 
-     So the stepper moves to its own row, right-aligned under the item it
-     belongs to, and the thumb spans both rows to keep them tied together. The
-     name gets the full ~290px and settles at two lines.
-
-     No markup changes — the grid is re-described, and the DOM order (thumb,
-     body, stepper) already reads correctly to a screen reader either way. */
-  .cart-item { gap: var(--spacing-sm) var(--spacing-md); grid-template-columns: 56px minmax(0, 1fr); }
-  .cart-item__thumb { grid-row: 1 / span 2; }
-  .cart-item__body  { grid-column: 2; grid-row: 1; }
-  .cart-item__qty   { grid-column: 2; grid-row: 2; justify-self: end; }
+     So the desktop grid holds — thumb 56 · name · stepper 100, top-aligned —
+     and only the gutter tightens, which buys the name back about 16px. */
+  .cart-item { gap: var(--spacing-sm); }
 
   .ship-group__items { gap: var(--spacing-md); }
   .cart-flat .cart-item { padding: var(--spacing-md) 0; }
