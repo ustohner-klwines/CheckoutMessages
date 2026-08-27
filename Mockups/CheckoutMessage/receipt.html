@@ -838,25 +838,35 @@
             </div>
             <div class="receipt-status">
               <div class="receipt-status__label" data-design-token="typography.variants.caption colors.text.secondary">Status</div>
-              <!-- REWORDED 2026-08-27. The chip said "Pre-arrival" — a label that only
-                   repeated the heading two lines above it. It now carries the one fact a
-                   shopper wants from this shipment's status: that we come to them.
+              <!-- BACK TO A ONE-WORD STATE, 2026-08-27 (second pass).
 
-                   ⚠ IT IS NO LONGER A STATUS CHIP. Every other shipment's chip is a
-                   server value (Picking / Ready / Not scheduled) rendered as a token with
-                   a state dot. This is a sentence, so the dot is gone — a status dot in
-                   front of a promise reads as an indicator for something that can change,
-                   and this cannot. Engineering consequence: this shipment's chip is copy,
-                   not `ReceiptDTO.Status`. See MESSAGES.md R3.
+                   For a few hours this chip carried the whole promise — "We'll contact
+                   you once your items are ready to ship or pick up." It read well on its
+                   own and was wrong in context: the subheader two lines below already
+                   makes that promise, and the chip is the only thing in the status column,
+                   which is where a shopper goes to find a STATE, not a sentence.
 
-                   THE NOTE UNDER IT WAS REMOVED: "Nothing to do now — we'll contact you
-                   when the wine lands." It made the same promise in different words, and
-                   would have sat directly beneath this one. Deleted rather than reworded,
-                   because there is nothing left for it to add. -->
-              <span class="status-chip status-chip--sentence" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">
-                We&rsquo;ll contact you once your items are ready to ship or pick up.
-                <span class="flag flag--changed">Reworded</span>
-              </span>
+                   Three reasons the token wins:
+                     · one shape per column. Scrolling three shipments gives Picking /
+                       Ready / Pre-arrival — three states, one silhouette. A paragraph in
+                       the third row breaks the scan.
+                     · it binds to real data. PreArrival is a MessageTypeEnum member, so
+                       this renders a value like every other chip. The sentence version was
+                       page copy with no field behind it, and needed an engineering caveat
+                       saying so.
+                     · the promise already has a reviewed home in M3.2, on all four pages.
+
+                   Yes, it repeats a word from the heading above ("Pre-arrival — expected
+                   by October 31, 2026"). That is the acceptable cost: the heading gives an
+                   identity and a date, the chip answers "what state is this in?" under a
+                   label that says Status, and inventing a different word for the same
+                   state to avoid the echo would be worse than the echo.
+
+                   NO NOTE. The other shipments carry one; this one has nothing to add that
+                   the two sentences below do not already say. What was here — "Nothing to
+                   do now, we'll contact you when the wine lands" — was a third wording of
+                   the same promise. See MESSAGES.md R3, NOTES.md §23. -->
+              <span class="status-chip" data-design-token="colors.background.subtle colors.grey.border" data-mui-component="StatusChip">Pre-arrival</span>
             </div>
           </div>          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
             No shipping charges until the items are ready to ship

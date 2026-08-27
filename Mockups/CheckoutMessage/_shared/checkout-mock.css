@@ -1095,25 +1095,12 @@ textarea.field__input {
   background: var(--color-grey-muted);
 }
 
-/* ── A chip holding a sentence, not a status ───────────────────────────────
-   Pre-arrival on the receipt (2026-08-27). Same grey surface, border and
-   radius, so it is still recognisably the same component in the same place —
-   but a pill sized for one word cannot hold a sentence:
+/* No .status-chip--sentence. A sentence variant existed briefly for the
+   receipt's pre-arrival chip and was reverted the same day: the status column
+   holds one-word states, and a paragraph in it broke the scan down the column.
+   Kept as a note rather than dead CSS — see NOTES.md §23, so the idea is not
+   simply re-proposed later. */
 
-     · NO STATE DOT. It marks something that can change; this promise cannot.
-     · align-items and text-align go back to the start, since the text wraps
-       and a centred second line under a right-aligned column reads as a caption
-       that lost its image.
-     · max-width 280px. Unbounded, it stretched to the full rail width on
-       desktop and stopped looking like a chip at all. */
-.status-chip--sentence {
-  display: block; max-width: 280px;
-  padding: var(--spacing-sm) 10px;
-  line-height: var(--line-height-caption);
-  text-align: left;
-}
-.status-chip--sentence::before { content: none; }
-@media (min-width: 700px) { .status-chip--sentence { margin-left: auto; } }
 
 .success-banner {
   background: var(--color-status-success);
