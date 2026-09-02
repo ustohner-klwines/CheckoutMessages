@@ -1043,6 +1043,15 @@
                    renders the preference is set and the control is a confirmation.
                    The opt-out is still first in the list, unselected — selecting it here
                    CLEARS a default the shopper was never asked about. -->
+              <!-- "Hold (by RS)" REMOVED 2026-09-01 (product). It was in the list because
+                   the list is the database's: every ShipWay with IsPrearrival set
+                   (ShipwayRepository.cs:189). So removing it is a FILTER, not a copy edit —
+                   either clear IsPrearrival on that shipway (it then leaves Account →
+                   Shipping Preferences too) or filter the code in the front end.
+                   ⚠ And check first whether any shopper's PreferredShipWayCD already points
+                   at it: dropping the option does not clear the stored value, and a select
+                   whose selection is missing shows the FIRST option instead — silently
+                   rewriting a preference the shopper did set. See MESSAGES.md R3. -->
               <select class="field__input" id="pa-pref" data-when="fulfilment:pickup" data-design-token="components.input.borderRadius colors.grey.border components.input.height" data-mui-component="Select size=small">
                 <option value="">I&rsquo;ll choose shipping once the items arrive</option>
                 <option selected>Pickup at RareStorage Redwood City</option>
@@ -1050,7 +1059,6 @@
                 <option>Pickup at RareStorage Hollywood</option>
                 <option>Pickup at RareStorage Culver City</option>
                 <option>RareStorage</option>
-                <option>Hold (by RS)</option>
                 <option>Pickup at RareStorage New York</option>
               </select>
               <!-- RS-ONLY ADDRESS: nothing has been written, because no pickup location
@@ -1063,7 +1071,6 @@
                 <option>Pickup at RareStorage Hollywood</option>
                 <option>Pickup at RareStorage Culver City</option>
                 <option>RareStorage</option>
-                <option>Hold (by RS)</option>
                 <option>Pickup at RareStorage New York</option>
               </select>
             </div>
