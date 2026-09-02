@@ -44,12 +44,19 @@
     happens next to IT, and the pre-arrival chip says Pre-arrival rather than
     Processing, because nothing is being processed.
 
-  >>> DELIVERABLE 3 — RELATIVE TIMINGS BECOME DATES <<<
-    "Leaves our warehouse in 1–2 days" is right on the cart, where there is no
-    clock to count from. Here the order is placed, so the same fact can be
-    stated as a date the shopper can hold us to — and the sub-groups that were
-    "2 days / 1–2 days / 28 days" become three dates, which is the first point
-    at which the shopper can see that one part of the shipment is a month out.
+  >>> DELIVERABLE 3 — ~~RELATIVE TIMINGS BECOME DATES~~ REVERSED 2026-09-01 <<<
+    This page briefly turned every estimate into a date, on the reasoning that
+    the order is placed so there is finally a clock to count from. CUSTOMER
+    SERVICE SAYS NO: we do not give out dates. A date is a promise a shopper
+    holds us to and calls about when it slips, and none of these dates exists
+    in the payload anyway (ReceiptDTO carries DateEntered and OrderDate and no
+    estimate of any kind). So the shipment statements read exactly as they do
+    on the three pages before this one — "in 1–2 days", "in 2 days", "in 28
+    days" — and the receipt no longer has its own timing idiom.
+    Kept as dates, deliberately: the order's OWN "Placed Friday, August 21,
+    2026", which is a record of something that happened, not a forecast; and
+    the pre-arrival heading's "expected by October 31, 2026", which is the
+    same on all four pages and cannot sensibly be said as a day count.
 
   >>> DELIVERABLE 4 — THE TWO THINGS STILL TO DO ARE THE ONLY EMPHASISED BOXES
     The rail holds at most one action card per example: the delivery scheduler
@@ -258,11 +265,16 @@
                receipt the address is printed in the rail and cannot be changed, so the sentence
                named a fixed fact and still declined to say how long — nothing to act on and
                nothing learned. What is left is the fact the shopper can use. -->
-          <p class="ship-group__msg" data-when="status:picking" data-design-token="typography.variants.body2 colors.text.primary">
-            Leaves our warehouse by <strong>Tuesday, August 25</strong>.
-          </p>
-          <p class="ship-group__msg" data-when="status:ready" data-design-token="typography.variants.body2 colors.text.primary">
-            Left our warehouse <strong>Tuesday, August 25</strong>.
+          <!-- ONE SENTENCE, BOTH STATES, 2026-09-01. This used to branch: "Leaves our
+               warehouse by <date>" while Picking, "Left our warehouse <date>" once Ready.
+               Both were dates, and the past-tense variant assumed the page re-renders
+               against what actually happened. It does not — the receipt is built at the
+               same time as the rest of the checkout, so this figure is an estimate made
+               once, at checkout, and never updated. An estimate cannot be stated in the
+               past tense, and it is the same estimate in both states, so the branch went
+               with the dates. The chip and the status note still carry the two states. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            Leaves our warehouse in <strong>1&ndash;2 days</strong>.
           </p>          <div class="ship-group__items">
             <div class="cart-item" data-design-token="spacing.md spacing.lg">
               <div class="cart-item__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
@@ -363,7 +375,7 @@
             Local delivery to your address from RareStorage Redwood City
           </p>          <div class="ship-sub">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
-              Item(s) below come from Redwood City. Available for local delivery from <strong>Monday, August 24</strong>
+              Item(s) below come from Redwood City and will be ready in <strong>1&ndash;2 days</strong>
             </div>
             <div class="ship-group__items">
               <div class="cart-item" data-design-token="spacing.md spacing.lg">
@@ -389,7 +401,7 @@
                See NOTES.md §18. -->
           <div class="ship-sub">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
-              Item(s) below come from San Francisco. Available for local delivery from <strong>Tuesday, August 25</strong>
+              Item(s) below come from San Francisco and will be ready in <strong>2 days</strong>
               <span class="flag flag--changed">Reworded</span>
             </div>
             <div class="ship-group__items">
@@ -420,7 +432,7 @@
             </div>
           </div>          <div class="ship-sub">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
-              Item(s) below come from New York. Available for local delivery from <strong>Friday, September 18</strong>
+              Item(s) below come from New York and will be ready in <strong>28 days</strong>
               <span class="flag flag--new">New</span>
             </div>
             <div class="ship-group__items">
@@ -450,13 +462,13 @@
               </div>
             </div>
           </div>
-          <!-- ⚠ THE DATE SPREAD IS NOW UNAVOIDABLE. Two parts of this shipment are
-               ready next week and one is a month out, and the receipt is the first
-               page that states all three as dates. Whether the shopper can schedule
-               one delivery for the 25th and another for September, or must wait for
-               everything, is Q1 — and this page must not imply an answer. It does
-               not: the panel takes one date, and nothing here says it is the only
-               one they will ever get. Needs a real answer before build. -->
+          <!-- ⚠ THE SPREAD IS STILL UNAVOIDABLE — 1–2 days, 2 days, 28 days in one
+               shipment. Removing the dates (2026-09-01) did not remove the problem it
+               exposed: whether the shopper can schedule one delivery for the two nearby
+               sub-groups and another for the New York one, or must wait for everything,
+               is Q1 — and this page must not imply an answer. It does not: the panel
+               takes one slot, and nothing here says it is the only one they will ever
+               get. Needs a real answer before build. -->
           <!-- REMOVED 2026-08-26 — the collapsed "What RareStorage means".
                Added 2026-08-21 so that the 60-day sentence's day 61 was one click away.
                That sentence is gone from this example, so nothing here claims a
@@ -542,7 +554,7 @@
           </div>
           <div class="ship-sub">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
-              Item(s) below come from Redwood City. Available for pickup from <strong>Monday, August 24</strong>
+              Item(s) below come from Redwood City and will be ready in <strong>1&ndash;2 days</strong>
             </div>
             <div class="ship-group__items">
               <div class="cart-item" data-design-token="spacing.md spacing.lg">
@@ -560,7 +572,7 @@
             </div>
           </div>          <div class="ship-sub">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
-              Item(s) below come from San Francisco. Available for pickup from <strong>Tuesday, August 25</strong>
+              Item(s) below come from San Francisco and will be ready in <strong>2 days</strong>
               <span class="flag flag--changed">Reworded</span>
             </div>
             <div class="ship-group__items">
@@ -591,7 +603,7 @@
             </div>
           </div>          <div class="ship-sub">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
-              Item(s) below come from New York. Available for pickup from <strong>Friday, September 18</strong>
+              Item(s) below come from New York and will be ready in <strong>28 days</strong>
               <span class="flag flag--new">New</span>
             </div>
             <div class="ship-group__items">
@@ -622,8 +634,8 @@
             </div>
           </div>
           <!-- ⚠ Same spread as Example 2, and here it is sharper: nothing stops the
-               shopper driving to the store on the 25th for seven of their eleven
-               bottles and again in September for the rest. Q7 says the 60-day limit is
+               shopper driving to the store in a couple of days for seven of their eleven
+               bottles and again a month later for the rest. Q7 says the 60-day limit is
                not enforced, so waiting is free — but nobody has said whether the store
                will release a partial collection. The pickup copy above was reworded 2026-08-26 to
                "once your items are ready" (the whole order), which no longer implies a partial
@@ -671,7 +683,7 @@
           </div>          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
             60 day complimentary storage. Shipping will be charged separately by RareStorage.
           </p>          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
-            Item(s) below leave the New York warehouse by <strong>Tuesday, August 25</strong>.
+            Item(s) below come from New York and will be ready in <strong>1&ndash;2 days</strong>.
             <span class="flag flag--changed">Reworded</span>
           </p>          <div class="ship-group__items">
             <div class="cart-item" data-design-token="spacing.md spacing.lg">
@@ -778,7 +790,7 @@
                source sub-groups, and the group heading above already says where the items are
                going. See MESSAGES.md M2.3. -->          <div class="ship-sub">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
-              Item(s) below leave the New York warehouse by <strong>Tuesday, August 25</strong>.
+              Item(s) below come from New York and will be ready in <strong>1&ndash;2 days</strong>.
               <span class="flag flag--changed">Reworded</span>
             </div>
             <div class="ship-group__items">
@@ -809,7 +821,7 @@
             </div>
           </div>          <div class="ship-sub">
             <div class="ship-sub__head" data-design-token="typography.variants.body2 colors.text.primary">
-              Item(s) below leave the Northern California warehouse by <strong>Thursday, August 27</strong>.
+              Item(s) below come from Northern California and will be ready in <strong>3&ndash;4 days</strong>.
               <span class="flag flag--changed">Reworded</span>
             </div>
             <div class="ship-group__items">
@@ -1048,7 +1060,7 @@
           Schedule My Delivery
         </button>
         <p class="t-body2" style="margin-top: var(--spacing-md); margin-bottom: 0;" data-design-token="typography.variants.body2 colors.text.primary">
-          Earliest available window: Monday, August 24, 9am&ndash;1pm (PST)
+          Earliest available window: in <strong>1&ndash;2 days</strong>, 9am&ndash;1pm (PST)
         </p>
         <div class="rail-card__meta">
           <span>Local Delivery #<br><strong>88421</strong></span>
