@@ -246,7 +246,7 @@
                        so stating it up top pre-empts a choice not yet made
                AFTER   cards collapse to the fee that resulted, plus the pencil
              ═══════════════════════════════════════════════════════════════ -->
-        <section class="ship-group" data-group="ld" data-ship="0" data-when="fulfilment:delivery">
+        <section class="ship-group" data-group="ld" data-ship="0" data-slot="0" data-when="fulfilment:delivery">
 
           <div class="ship-group__head">
             <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
@@ -612,7 +612,7 @@
 
 
         <!-- ═══════════ SHIPMENT 1 (EXAMPLE 1) — California warehouse ═══════════ -->
-        <section class="ship-group" data-group="ca" data-ship="0" data-when="fulfilment:shipping">
+        <section class="ship-group" data-group="ca" data-ship="0" data-slot="0" data-when="fulfilment:shipping">
 
           <div class="ship-group__head">
             <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
@@ -1060,6 +1060,101 @@
           </details>
         </section>
 
+
+        <!-- ═══════════ SHIPMENT 4 — SPECIAL ORDER (Example 1 only) ═══════════
+             ADDED 2026-09-14. Special order is stock K&L brings in for the shopper —
+             a current release the store does not hold, not a future release. It has
+             lived on this design only as a COPY SWAP on the deferred group (the cart's
+             group3 toggle, MESSAGES.md M3). Product's decision: here it is its own
+             shipment, and unlike pre-arrival the shopper picks a method and a price now.
+
+             ⚠ THAT MAKES IT THE FIRST DEFERRED SHIPMENT THAT QUOTES A PRICE, which is a
+             real change to NOTES.md §6: "no price, because there is no price decision"
+             was the rule for FIXED shipments, and pre-arrival's "No shipping charges
+             until the items are ready to ship" is the other half of it. Special order is
+             now neither FIXED nor an ordinary fulfilment shipment. It also answers M3's
+             open question — "same message with a different name, or its own entry?" —
+             in favour of its own entry, because it now BEHAVES differently.
+
+             Placed last because the settled rule is "pre-arrival and special order
+             always last" (MESSAGES.md, ordering). Worth revisiting: that rule was
+             written when both were deferred and silent. A shipment that asks a question
+             may belong with the other shipments that ask questions.
+
+             The carrier prices are LOWER than shipment 1's — one bottle, not five. -->
+        <section class="ship-group ship-group--deferred" data-group="so" data-ship="3" data-slot="1"
+                 data-when="fulfilment:shipping">
+
+          <div class="ship-group__head">
+            <span class="ship-group__eyebrow" data-design-token="typography.variants.caption typography.fontWeight.bold colors.text.primary">
+              Shipment <span data-seq>4</span> of <span data-seq-total>4</span>
+            </span>
+            <div class="ship-group__title-row">
+              <h2 class="ship-group__title" data-design-token="typography.variants.h5 typography.fontWeight.bold colors.text.primary" data-mui-component="Typography variant=h5">
+                <!-- MUI @mui/icons-material/AccessTime, burgundy — same marker the
+                     deferred shipments carry, because this one also arrives later. -->
+                <svg class="ship-group__icon" viewBox="0 0 24 24" aria-hidden="true"
+                     data-design-token="colors.brand.burgundy"
+                     data-mui-component="AccessTimeIcon color=secondary">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                  <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                Special order &mdash; expected by September 30, 2026
+                <span class="flag flag--new">New</span>
+              </h2>
+              <span class="ship-group__count" data-design-token="typography.variants.body2 colors.text.secondary">
+                1 item
+              </span>
+            </div>
+          </div>
+
+          <!-- ORDER RULE, as on every other group: the shipment-wide fact leads, and
+               the sentence pointing at "item(s) below" is last, immediately above them.
+               Here the shipment-wide fact is that it travels on its own. -->
+          <p class="ship-group__msg" data-design-token="typography.variants.body2 colors.text.primary">
+            Ordered in for you. It ships on its own, as soon as it arrives.
+            <span class="flag flag--proposed">Draft copy</span>
+          </p>
+
+          <details class="items-disclose">
+            <summary data-design-token="typography.variants.body2 colors.text.primary">
+              <span class="items-disclose__label">Choose how the item(s) below ship when they arrive.</span>
+              <span class="flag flag--proposed">Draft copy</span>
+            </summary>
+            <div class="item-preview">
+              <div class="item-preview__row">
+                <div class="item-preview__thumb" data-design-token="colors.background.subtle components.card.borderRadius">
+                  <svg viewBox="0 0 22 60" aria-hidden="true"><rect x="7" y="3" width="8" height="18" rx="2" fill="#3E2723"/><rect x="4" y="19" width="14" height="39" rx="3" fill="#7B1E3A"/><rect x="4" y="31" width="14" height="15" fill="#FAF8F8" opacity=".85"/></svg>
+                </div>
+                <div class="item-preview__name" data-design-token="typography.variants.body2 colors.text.linked">2021 Domaine Faiveley Mercurey &ldquo;Clos des Myglands&rdquo; 1er Cru</div>
+                <div class="item-preview__qty" data-design-token="typography.variants.body2 colors.text.secondary">Qty 1</div>
+                <div class="item-preview__total" data-design-token="typography.variants.body2 colors.text.primary">$39.99</div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Chosen state -->
+          <div class="ship-group__chosen" data-design-token="typography.variants.body2 colors.text.primary">
+            <span><span data-chosen-label>UPS Ground ($13.00)</span></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" data-edit="1" data-design-token="colors.text.secondary" data-mui-component="IconButton size=small"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </div>
+
+          <!-- Options. One bottle, so the quoted prices sit below shipment 1's.
+               ⚠ The "★ Store your order with RareStorage" option that shipment 1 carries
+               is deliberately NOT here: storing a special order is plausible, but it
+               would put a second copy of the RareStorage legal panel on the page, which
+               is the duplication paint() already works to avoid. Raise it before build. -->
+          <div class="ship-group__options">
+            <div class="option" data-pick="1" data-label="FedEx 2-Day ($22.00)"><span class="option__radio"></span><span class="option__label">FedEx 2-Day</span><span class="option__price">$22.00</span></div>
+            <div class="option" data-pick="1" data-label="FedEx 3-Day ($19.00)"><span class="option__radio"></span><span class="option__label">FedEx 3-Day</span><span class="option__price">$19.00</span></div>
+            <div class="option" data-pick="1" data-label="FedEx Ground ($14.00)"><span class="option__radio"></span><span class="option__label">FedEx Ground</span><span class="option__price">$14.00</span></div>
+            <div class="option" data-pick="1" data-label="FedEx Next-Day Priority ($38.00)"><span class="option__radio"></span><span class="option__label">FedEx Next-Day Priority</span><span class="option__price">$38.00</span></div>
+            <div class="option" data-pick="1" data-label="FedEx Next-Day Standard ($35.00)"><span class="option__radio"></span><span class="option__label">FedEx Next-Day Standard</span><span class="option__price">$35.00</span></div>
+            <div class="option" data-pick="1" data-label="GLS ($16.00)"><span class="option__radio"></span><span class="option__label">GLS</span><span class="option__price">$16.00</span></div>
+            <div class="option" data-pick="1" data-label="UPS Ground ($13.00)"><span class="option__radio"></span><span class="option__label">UPS Ground</span><span class="option__price">$13.00</span></div>
+          </div>
+        </section>
+
       </div><!-- /.ship-groups -->
 
       <!-- Shipping materials: hidden for pickup AND for local delivery.
@@ -1165,34 +1260,54 @@
 <script src="_shared/checkout-sheet.js"></script>
 <script>
   /* ── Progressive disclosure ──────────────────────────────────────────────
-     Only shipment 1 asks for a method, so `chosen` holds one entry.
-       chosen[0] = the method picked for shipment 1, or null.
+     REWRITTEN 2026-09-14, when special order became a second CHOOSE shipment.
 
-     Shipment i is  done   when chosen[i] is set
-                    open   when every earlier shipment is set
-                    locked otherwise
+     Until then a group's POSITION was also its answer slot: `data-ship="1"`
+     meant both "I am second" and "my answer is chosen[1]". That works only while
+     exactly one shipment asks a question. Special order asks a second one and
+     sits LAST, behind two FIXED shipments that never answer anything — so a
+     position-indexed array would have left it locked forever behind chosen[1]
+     and chosen[2], which nothing ever sets.
 
-     Shipments 2 and 3 are FIXED — nothing to pick — so they carry no entry in
-     `chosen`. They read as locked until shipment 1 is answered, then simply
-     state what happens. They never enter "done"; there is nothing to confirm. */
-  var chosen = [null];
+     So the two ideas are now separate:
+       data-ship  → position on the page, used only for "is everything ABOVE me
+                    answered?"
+       data-slot  → which entry in `chosen` holds this group's answer. FIXED
+                    shipments have no slot: they never gate anything and never
+                    reach "done", because there is nothing to confirm.
+
+     Hidden groups are skipped, so an example that does not show a question is
+     never blocked by it. */
+  var chosen = [null, null];   // 0 = shipment 1's method · 1 = the special order's
+
+  function slotOf(g) {
+    return g.dataset.slot === undefined ? null : parseInt(g.dataset.slot, 10);
+  }
 
   function paint() {
     var groups = Array.prototype.slice.call(document.querySelectorAll("[data-ship]"));
 
     groups.forEach(function (g) {
-      var i = parseInt(g.dataset.ship, 10);
-      var earlierDone = chosen.slice(0, i).every(function (c) { return c !== null; });
-      var isDone = i < chosen.length && chosen[i] !== null;
+      var pos  = parseInt(g.dataset.ship, 10);
+      var slot = slotOf(g);
+
+      var earlierDone = groups.every(function (other) {
+        if (other === g) return true;
+        if (other.classList.contains("is-hidden")) return true;
+        if (parseInt(other.dataset.ship, 10) >= pos) return true;
+        var s = slotOf(other);
+        return s === null || chosen[s] != null;
+      });
+      var isDone = slot !== null && chosen[slot] != null;
 
       g.classList.remove("is-locked", "is-open", "is-done");
       g.classList.add(!earlierDone ? "is-locked" : isDone ? "is-done" : "is-open");
 
       var label = g.querySelector("[data-chosen-label]");
-      if (label && isDone) label.textContent = chosen[i];
+      if (label && isDone) label.textContent = chosen[slot];
 
       Array.prototype.forEach.call(g.querySelectorAll("[data-pick]"), function (opt) {
-        opt.classList.toggle("option--selected", chosen[i] === opt.dataset.label);
+        opt.classList.toggle("option--selected", slot !== null && chosen[slot] === opt.dataset.label);
       });
     });
 
@@ -1258,7 +1373,7 @@
        The before/after toolbar control is gone; the after state is reached the way
        the shopper reaches it, by clicking a method, and undone with the pencil.
        Switching example resets to un-selected, which is the honest starting point. */
-    chosen = [null];
+    chosen = [null, null];
     paint();
   };
   KLMock.render();
